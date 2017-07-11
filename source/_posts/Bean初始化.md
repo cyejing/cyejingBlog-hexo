@@ -1,5 +1,6 @@
 ---
 title: Bean的加载流程概览
+tags : [spring,java]
 ---
 
 下面有很简单的一段代码可以作为Spring代码加载的入口：
@@ -18,6 +19,8 @@ ClassPathXmlApplicationContext用于加载CLASSPATH下的Spring配置文件
 
 
 加载的主要流程: AbstractApplicationContext.refresh()
+
+<!--more-->
 
 ```java
 public void refresh() throws BeansException, IllegalStateException {
