@@ -1,0 +1,68 @@
+<!DOCTYPE html>
+<!--
+To change this license header, choose License Headers in Project Properties.
+To change this template file, choose Tools | Templates
+and open the template in the editor.
+-->
+<html>
+    <head>
+        <title>7*7消除游戏_YJ</title>
+        <meta charset="UTF-8">
+        <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no" />
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"/>
+        <link type="text/css" rel="stylesheet" href="css/newcss.css"/>
+        <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+        <script type="text/javascript" src="js/jquery.easing.1.3.js"></script>
+        <script type="text/javascript" src="js/bootstrap.min.js"></script>
+        <script type="text/javascript" src="js/respond.min.js"></script>
+        <script type="text/javascript" src="js/js.js"></script>
+    </head>
+    <body>
+        <div class="progress progress-striped">
+            <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="300" style="width:0%;">
+                LEVEL <span>1</span>
+            </div>
+        </div>
+        <div class="solid visible-xs visible-sm"></div>
+        <div class="container main">
+
+            <div class="myInfo">
+                <div id="score"><small>SCORE </small><strong>0</strong></div>
+                <div id="combo"><small>COMBO </small><strong>x0</strong></div>
+            </div>
+            <div class="myNext">
+                <div>
+                    <p>UP NEXT
+                        <a href="help.html"><img src="css/help.png" class="help-img"/></a>
+                    </p>
+                    <table id="next" class="table  table-bordered">
+                        <tr>
+                            <td class=""></td>
+                            <td class=""></td>
+                            <td class=""></td>
+                        </tr>
+                        <tr>
+                            <td></td>
+                            <td></td>
+                            <td></td>
+                        </tr>
+                    </table>
+                </div>
+            </div>
+            <div style="position: relative">
+                <table class="table table-bordered game-box">
+                    <tbody>
+
+                    </tbody>
+                </table>
+                <div class="boxtemp" style="position: absolute; display: none"></div>
+            </div>
+        </div>
+        <script>
+            $(document).ready(function() {
+                $(".game-box").game();
+            });
+        </script>
+    </body>
+</html>

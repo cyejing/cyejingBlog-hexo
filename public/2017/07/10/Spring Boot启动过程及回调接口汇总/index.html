@@ -1,0 +1,1085 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next pisces use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="spring,java,springboot," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="Spring Boot启动过程及回调接口汇总注：本文基于spring-boot 1.4.1.RELEASE, spring 4.3.3.RELEASE撰写。 启动顺序Spring boot的启动代码一般是这样的： 123456@SpringBootApplicationpublic class SampleApplication &amp;#123;  public static void main(St">
+<meta name="keywords" content="spring,java,springboot">
+<meta property="og:type" content="article">
+<meta property="og:title" content="Spring Boot启动过程及回调接口汇总">
+<meta property="og:url" content="http://cyejing.github.io/2017/07/10/Spring Boot启动过程及回调接口汇总/index.html">
+<meta property="og:site_name" content="CYeJing">
+<meta property="og:description" content="Spring Boot启动过程及回调接口汇总注：本文基于spring-boot 1.4.1.RELEASE, spring 4.3.3.RELEASE撰写。 启动顺序Spring boot的启动代码一般是这样的： 123456@SpringBootApplicationpublic class SampleApplication &amp;#123;  public static void main(St">
+<meta property="og:updated_time" content="2017-07-11T06:33:24.000Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="Spring Boot启动过程及回调接口汇总">
+<meta name="twitter:description" content="Spring Boot启动过程及回调接口汇总注：本文基于spring-boot 1.4.1.RELEASE, spring 4.3.3.RELEASE撰写。 启动顺序Spring boot的启动代码一般是这样的： 123456@SpringBootApplicationpublic class SampleApplication &amp;#123;  public static void main(St">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Pisces',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cyejing.github.io/2017/07/10/Spring Boot启动过程及回调接口汇总/"/>
+
+
+
+
+
+  <title> Spring Boot启动过程及回调接口汇总 | CYeJing </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-102322008-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CYeJing</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">CYeJing</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://cyejing.github.io/2017/07/10/Spring Boot启动过程及回调接口汇总/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CYeJing">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CYeJing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                Spring Boot启动过程及回调接口汇总
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2017-07-10T18:46:17+08:00">
+                2017-07-10
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2017/07/10/Spring Boot启动过程及回调接口汇总/" class="leancloud_visitors" data-flag-title="Spring Boot启动过程及回调接口汇总">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="Spring-Boot启动过程及回调接口汇总"><a href="#Spring-Boot启动过程及回调接口汇总" class="headerlink" title="Spring Boot启动过程及回调接口汇总"></a>Spring Boot启动过程及回调接口汇总</h1><p>注：本文基于<a href="https://github.com/spring-projects/spring-boot/tree/v1.4.1.RELEASE" target="_blank" rel="external">spring-boot 1.4.1.RELEASE</a>, <a href="https://github.com/spring-projects/spring-framework/tree/v4.3.3.RELEASE" target="_blank" rel="external">spring 4.3.3.RELEASE</a>撰写。</p>
+<h2 id="启动顺序"><a href="#启动顺序" class="headerlink" title="启动顺序"></a>启动顺序</h2><p>Spring boot的启动代码一般是这样的：</p>
+<figure class="highlight java"><table><tr><td class="gutter"><pre><div class="line">1</div><div class="line">2</div><div class="line">3</div><div class="line">4</div><div class="line">5</div><div class="line">6</div></pre></td><td class="code"><pre><div class="line"><span class="meta">@SpringBootApplication</span></div><div class="line"><span class="keyword">public</span> <span class="class"><span class="keyword">class</span> <span class="title">SampleApplication</span> </span>&#123;</div><div class="line">  <span class="function"><span class="keyword">public</span> <span class="keyword">static</span> <span class="keyword">void</span> <span class="title">main</span><span class="params">(String[] args)</span> <span class="keyword">throws</span> Exception </span>&#123;</div><div class="line">    SpringApplication.run(SampleApplication.class, args);</div><div class="line">  &#125;</div><div class="line">&#125;</div></pre></td></tr></table></figure>
+<h3 id="初始化SpringApplication"><a href="#初始化SpringApplication" class="headerlink" title="初始化SpringApplication"></a>初始化SpringApplication</h3><ol>
+<li><code>SpringApplication#run(Object source, String... args)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L1174" target="_blank" rel="external">#L1174</a></li>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L1186" target="_blank" rel="external">SpringApplication#L1186</a> -&gt; <code>SpringApplication(sources)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L236" target="_blank" rel="external">#L236</a><ol>
+<li><code>SpringApplication#initialize(Object[] sources)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L256" target="_blank" rel="external">#L256</a> <a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/SpringApplication.html" target="_blank" rel="external">javadoc</a><ol>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L257" target="_blank" rel="external">SpringApplication#L257</a> 添加source（复数），<code>SpringApplication</code>使用source来构建Bean。一般来说在<code>run</code>的时候都会把<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/SpringBootApplication.html" target="_blank" rel="external">@SpringBootApplication</a>标记的类(本例中是SampleApplication)放到<code>sources</code>参数里，然后由这个类出发找到Bean的定义。</li>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L261" target="_blank" rel="external">SpringApplication#L261</a> 初始化<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContextInitializer.html" target="_blank" rel="external">ApplicationContextInitializer</a>列表（见附录）</li>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L263" target="_blank" rel="external">SpringApplication#L263</a> 初始化<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationListener.html" target="_blank" rel="external">ApplicationListener</a>列表（见附录）</li>
+</ol>
+</li>
+</ol>
+</li>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L1186" target="_blank" rel="external">SpringApplication#L1186</a> -&gt; <code>SpringApplication#run(args)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L297" target="_blank" rel="external">#L297</a>，进入运行阶段</li>
+</ol>
+<a id="more"></a>
+<h3 id="推送ApplicationStartedEvent"><a href="#推送ApplicationStartedEvent" class="headerlink" title="推送ApplicationStartedEvent"></a>推送ApplicationStartedEvent</h3><p><code>SpringApplication#run(args)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L297" target="_blank" rel="external">#L297</a></p>
+<ol>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L303" target="_blank" rel="external">SpringApplication#L303</a> 初始化<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplicationRunListeners.java" target="_blank" rel="external">SpringApplicationRunListeners</a> (<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/SpringApplicationRunListener.html" target="_blank" rel="external">SpringApplicationRunListener</a>的集合)。它内部只包含<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/event/EventPublishingRunListener.html" target="_blank" rel="external">EventPublishingRunListener</a>。</li>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L304" target="_blank" rel="external">SpringApplication#L304</a> 推送<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/event/ApplicationStartedEvent.html" target="_blank" rel="external">ApplicationStartedEvent</a>给所有的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationListener.html" target="_blank" rel="external">ApplicationListener</a>（见附录）。 下面是关心此事件的listener：<ol>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/liquibase/LiquibaseServiceLocatorApplicationListener.html" target="_blank" rel="external">LiquibaseServiceLocatorApplicationListener</a></li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/logging/LoggingApplicationListener.html" target="_blank" rel="external">LoggingApplicationListener</a>（见附录）</li>
+</ol>
+</li>
+</ol>
+<h3 id="准备Environment"><a href="#准备Environment" class="headerlink" title="准备Environment"></a>准备Environment</h3><p><code>SpringApplication#run(args)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L297" target="_blank" rel="external">#L297</a>-&gt;<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L308" target="_blank" rel="external">#L308</a>-&gt;<code>prepareEnvironment(...)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L331" target="_blank" rel="external">#L331</a>准备<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/ConfigurableEnvironment.html" target="_blank" rel="external">ConfigurableEnvironment</a>。</p>
+<ol>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L335" target="_blank" rel="external">SpringApplication#L335</a> 创建<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/StandardEnvironment.html" target="_blank" rel="external">StandardEnvironment</a>（见附录）。</li>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L336" target="_blank" rel="external">SpringApplication#L336</a> 配置<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/StandardEnvironment.html" target="_blank" rel="external">StandardEnvironment</a>，将命令行和默认参数整吧整吧，添加到<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/MutablePropertySources.html" target="_blank" rel="external">MutablePropertySources</a>。</li>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L337" target="_blank" rel="external">SpringApplication#L337</a> 推送<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/event/ApplicationEnvironmentPreparedEvent.html" target="_blank" rel="external">ApplicationEnvironmentPreparedEvent</a>给所有的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationListener.html" target="_blank" rel="external">ApplicationListener</a>（见附录）。下面是关心此事件的listener:<ol>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/BackgroundPreinitializer.html" target="_blank" rel="external">BackgroundPreinitializer</a></li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/FileEncodingApplicationListener.html" target="_blank" rel="external">FileEncodingApplicationListener</a></li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/config/AnsiOutputApplicationListener.html" target="_blank" rel="external">AnsiOutputApplicationListener</a></li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/config/ConfigFileApplicationListener.html" target="_blank" rel="external">ConfigFileApplicationListener</a>（见附录）</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/config/DelegatingApplicationListener.html" target="_blank" rel="external">DelegatingApplicationListener</a></li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/logging/ClasspathLoggingApplicationListener.html" target="_blank" rel="external">ClasspathLoggingApplicationListener</a></li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/logging/LoggingApplicationListener.html" target="_blank" rel="external">LoggingApplicationListener</a></li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/system/ApplicationPidFileWriter.html" target="_blank" rel="external">ApplicationPidFileWriter</a></li>
+</ol>
+</li>
+</ol>
+<p>可以参考<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#boot-features-external-config" target="_blank" rel="external">官方文档</a>了解<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/StandardEnvironment.html" target="_blank" rel="external">StandardEnvironment</a>构建好之后，其<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/MutablePropertySources.html" target="_blank" rel="external">MutablePropertySources</a>内部到底有些啥东东。</p>
+<h3 id="创建及准备ApplicationContext"><a href="#创建及准备ApplicationContext" class="headerlink" title="创建及准备ApplicationContext"></a>创建及准备ApplicationContext</h3><p><code>SpringApplication#run(args)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L297" target="_blank" rel="external">#L297</a></p>
+<ol>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L311" target="_blank" rel="external">SpringApplication#L311</a>-&gt;<code>SpringApplication#createApplicationContext()</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L583" target="_blank" rel="external">#L583</a>创建<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContext.html" target="_blank" rel="external">ApplicationContext</a>。可以看到实际上创建的是<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/AnnotationConfigApplicationContext.html" target="_blank" rel="external">AnnotationConfigApplicationContext</a>或<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/embedded/AnnotationConfigEmbeddedWebApplicationContext.html" target="_blank" rel="external">AnnotationConfigEmbeddedWebApplicationContext</a>。<ol>
+<li>在构造<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/AnnotationConfigApplicationContext.html" target="_blank" rel="external">AnnotationConfigApplicationContext</a>的时候，间接注册了一个<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/support/BeanDefinitionRegistryPostProcessor.html" target="_blank" rel="external">BeanDefinitionRegistryPostProcessor</a>的Bean：<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ConfigurationClassPostProcessor.html" target="_blank" rel="external">ConfigurationClassPostProcessor</a>。经由<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/AnnotatedBeanDefinitionReader.html" target="_blank" rel="external">AnnotatedBeanDefinitionReader</a><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/annotation/AnnotatedBeanDefinitionReader.java#L83" target="_blank" rel="external">构造函数</a>-&gt;<a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/annotation/AnnotationConfigUtils.java#L160" target="_blank" rel="external">AnnotationConfigUtils.registerAnnotationConfigProcessors</a>。</li>
+</ol>
+</li>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L313" target="_blank" rel="external">SpringApplication#L313</a>-&gt;<code>SpringApplication#prepareContext(...)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L344" target="_blank" rel="external">#L344</a>准备<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContext.html" target="_blank" rel="external">ApplicationContext</a><ol>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L347" target="_blank" rel="external">SpringApplication#L347</a>-&gt;<code>context.setEnvironment(environment)</code>，把之前准备好的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/Environment.html" target="_blank" rel="external">Environment</a>塞给<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContext.html" target="_blank" rel="external">ApplicationContext</a></li>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L348" target="_blank" rel="external">SpringApplication#L348</a>-&gt;<code>postProcessApplicationContext(context)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L605" target="_blank" rel="external">#L605</a>，给<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContext.html" target="_blank" rel="external">ApplicationContext</a>设置了一些其他东西</li>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L349" target="_blank" rel="external">SpringApplication#L349</a>-&gt;<code>applyInitializers(context)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L630" target="_blank" rel="external">#L630</a>，调用之前准备好的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContextInitializer.html" target="_blank" rel="external">ApplicationContextInitializer</a></li>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L350" target="_blank" rel="external">SpringApplication#L350</a>-&gt;<code>listeners.contextPrepared(context)</code>-&gt;<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/context/event/EventPublishingRunListener.java#L73" target="_blank" rel="external">EventPublishingRunListener.contextPrepared</a>，但实际上啥都没做。</li>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L366" target="_blank" rel="external">SpringApplication#L366</a>-&gt;<code>load</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L687" target="_blank" rel="external">#L687</a>，负责将source(复数)里所定义的Bean加载到<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContext.html" target="_blank" rel="external">ApplicationContext</a>里，在本例中就是SampleApplication，这些source是在<strong>初始化SpringApplication</strong>阶段获得的。</li>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L367" target="_blank" rel="external">SpringApplication#L367</a>-&gt;<code>listeners.contextLoaded(context)</code>-&gt;<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/context/event/EventPublishingRunListener.java#L78" target="_blank" rel="external">EventPublishingRunListener.contextLoaded</a>。<ol>
+<li>将<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/SpringApplication.html" target="_blank" rel="external">SpringApplication</a>自己拥有的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationListener.html" target="_blank" rel="external">ApplicationListener</a>加入到<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContext.html" target="_blank" rel="external">ApplicationContext</a></li>
+<li>发送<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/event/ApplicationPreparedEvent.html" target="_blank" rel="external">ApplicationPreparedEvent</a>。目前已知关心这个事件的有<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/config/ConfigFileApplicationListener.html" target="_blank" rel="external">ConfigFileApplicationListener</a>、<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/logging/LoggingApplicationListener.html" target="_blank" rel="external">LoggingApplicationListener</a>、<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/system/ApplicationPidFileWriter.html" target="_blank" rel="external">ApplicationPidFileWriter</a></li>
+</ol>
+</li>
+</ol>
+</li>
+</ol>
+<p>要注意的是在这个阶段，<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContext.html" target="_blank" rel="external">ApplicationContext</a>里只有SampleApplication，SampleApplication是Bean的加载工作的起点。</p>
+<h3 id="刷新ApplicationContext"><a href="#刷新ApplicationContext" class="headerlink" title="刷新ApplicationContext"></a>刷新ApplicationContext</h3><p>根据前面所讲，这里的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContext.html" target="_blank" rel="external">ApplicationContext</a>实际上是<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/support/GenericApplicationContext.html" target="_blank" rel="external">GenericApplicationContext</a><br>-&gt;<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/AnnotationConfigApplicationContext.html" target="_blank" rel="external">AnnotationConfigApplicationContext</a>或者<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/embedded/AnnotationConfigEmbeddedWebApplicationContext.html" target="_blank" rel="external">AnnotationConfigEmbeddedWebApplicationContext</a></p>
+<p><code>SpringApplication#run(args)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L297" target="_blank" rel="external">#L297</a><br>-&gt;<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L315" target="_blank" rel="external">#L315</a>-&gt;<code>SpringApplication#refreshContext(context)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L370" target="_blank" rel="external">#L370</a><br>-&gt;<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L371" target="_blank" rel="external">#L371</a>-&gt;<code>SpringApplication#refresh(context)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L759" target="_blank" rel="external">#L759</a><br>-&gt;<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L761" target="_blank" rel="external">#L761</a>-&gt;<code>AbstractApplicationContext#refresh</code><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L507" target="_blank" rel="external">AbstractApplicationContext#L507</a></p>
+<ol>
+<li><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L510" target="_blank" rel="external">AbstractApplicationContext#L510</a>-&gt;<code>AbstractApplicationContext#prepareRefresh()</code><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L575" target="_blank" rel="external">#L575</a>，做了一些初始化工作，比如设置了当前Context的状态，初始化propertySource（其实啥都没干），检查required的property是否都已在Environment中（其实并没有required的property可供检查）等。</li>
+<li><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L513" target="_blank" rel="external">AbstractApplicationContext#L513</a>-&gt;<code>obtainFreshBeanFactory()</code><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L611" target="_blank" rel="external">#L611</a>，获得<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/BeanFactory.html" target="_blank" rel="external">BeanFactory</a>，实际上这里获得的是<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/support/DefaultListableBeanFactory.html" target="_blank" rel="external">DefaultListableBeanFactory</a></li>
+<li><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L516" target="_blank" rel="external">AbstractApplicationContext#L516</a>-&gt;<code>prepareBeanFactory(beanFactory)</code><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L625" target="_blank" rel="external">#L625</a>准备<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/BeanFactory.html" target="_blank" rel="external">BeanFactory</a><ol>
+<li>给beanFactory设置了ClassLoader</li>
+<li>给beanFactory设置了<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/expression/StandardBeanExpressionResolver.html" target="_blank" rel="external">SpEL解析器</a></li>
+<li>给beanFactory设置了<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/PropertyEditorRegistrar.html" target="_blank" rel="external">PropertyEditorRegistrar</a></li>
+<li>给beanFactory添加了<a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/ApplicationContextAwareProcessor.java" target="_blank" rel="external">ApplicationContextAwareProcessor</a>（<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanPostProcessor.html" target="_blank" rel="external">BeanPostProcessor</a>的实现类），需要注意的是它是第一个被添加到<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/BeanFactory.html" target="_blank" rel="external">BeanFactory</a>的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanPostProcessor.html" target="_blank" rel="external">BeanPostProcessor</a></li>
+<li>给beanFactory设置忽略解析以下类的依赖：<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ResourceLoaderAware.html" target="_blank" rel="external">ResourceLoaderAware</a>、<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationEventPublisherAware.html" target="_blank" rel="external">ApplicationEventPublisherAware</a>、<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/MessageSourceAware.html" target="_blank" rel="external">MessageSourceAware</a>、<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContextAware.html" target="_blank" rel="external">ApplicationContextAware</a>、<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/EnvironmentAware.html" target="_blank" rel="external">EnvironmentAware</a>。原因是注入这些回调接口本身没有什么意义。</li>
+<li>给beanFactory添加了以下类的依赖解析：<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/BeanFactory.html" target="_blank" rel="external">BeanFactory</a>、<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/io/ResourceLoader.html" target="_blank" rel="external">ResourceLoader</a>、<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationEventPublisher.html" target="_blank" rel="external">ApplicationEventPublisher</a>、<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContext.html" target="_blank" rel="external">ApplicationContext</a></li>
+<li>给beanFactory添加<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/weaving/LoadTimeWeaverAwareProcessor.html" target="_blank" rel="external">LoadTimeWeaverAwareProcessor</a>用来处理<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/weaving/LoadTimeWeaverAware.html" target="_blank" rel="external">LoadTimeWeaverAware</a>的回调，在和AspectJ集成的时候会用到</li>
+<li>把<code>getEnvironment()</code>作为Bean添加到beanFactory中，Bean Name: <code>environment</code></li>
+<li>把<code>getEnvironment().getSystemProperties()</code>作为Bean添加到beanFactory中，Bean Name: <code>systemProperties</code></li>
+<li>把<code>getEnvironment().getSystemEnvironment()</code>作为Bean添加到beanFactory中，Bean Name: <code>systemEnvironment</code></li>
+</ol>
+</li>
+<li><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L520" target="_blank" rel="external">AbstractApplicationContext#L520</a>-&gt;<code>postProcessBeanFactory(beanFactory)</code>，后置处理<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/BeanFactory.html" target="_blank" rel="external">BeanFactory</a>，实际啥都没做</li>
+<li><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L523" target="_blank" rel="external">AbstractApplicationContext#L523</a>-&gt;<code>invokeBeanFactoryPostProcessors(beanFactory)</code>，利用<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanFactoryPostProcessor.html" target="_blank" rel="external">BeanFactoryPostProcessor</a>，对beanFactory做后置处理。调用此方法时有四个<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanFactoryPostProcessor.html" target="_blank" rel="external">BeanFactoryPostProcessor</a>：<ol>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/SharedMetadataReaderFactoryContextInitializer.java" target="_blank" rel="external">SharedMetadataReaderFactoryContextInitializer</a>的内部类<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/SharedMetadataReaderFactoryContextInitializer.java#L66" target="_blank" rel="external">CachingMetadataReaderFactoryPostProcessor</a>，是在 <strong>创建及准备ApplicationContext 2.3</strong> 时添加的：<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/SharedMetadataReaderFactoryContextInitializer.java#L57" target="_blank" rel="external">#L57</a></li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/ConfigurationWarningsApplicationContextInitializer.html" target="_blank" rel="external">ConfigurationWarningsApplicationContextInitializer</a>的内部类<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/context/ConfigurationWarningsApplicationContextInitializer.java#L75" target="_blank" rel="external">ConfigurationWarningsPostProcessor</a>，是在 <strong>创建及准备ApplicationContext 2.3</strong> 时添加的：<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/context/ConfigurationWarningsApplicationContextInitializer.java#L60" target="_blank" rel="external">#L60</a></li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/config/ConfigFileApplicationListener.html" target="_blank" rel="external">ConfigFileApplicationListener</a>的内部类<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/context/config/ConfigFileApplicationListener.java#L285" target="_blank" rel="external">PropertySourceOrderingPostProcessor</a>，是在 <strong>创建及准备ApplicationContext 2.6</strong> 时添加的：<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/context/config/ConfigFileApplicationListener.java#L158" target="_blank" rel="external">#L158</a>-&gt;<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/context/config/ConfigFileApplicationListener.java#L199" target="_blank" rel="external">#L199</a>-&gt;<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/context/config/ConfigFileApplicationListener.java#L244" target="_blank" rel="external">#L244</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ConfigurationClassPostProcessor.html" target="_blank" rel="external">ConfigurationClassPostProcessor</a>，负责读取<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanDefinition.html" target="_blank" rel="external">BeanDefinition</a>是在 <strong>创建及准备ApplicationContext 1.1</strong> 时添加的</li>
+</ol>
+</li>
+<li><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L526" target="_blank" rel="external">AbstractApplicationContext#L526</a>-&gt;<code>registerBeanPostProcessors(beanFactory)</code>，注册<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanPostProcessor.html" target="_blank" rel="external">BeanPostProcessor</a></li>
+<li><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L529" target="_blank" rel="external">AbstractApplicationContext#L529</a>-&gt;<code>initMessageSource()</code><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L704" target="_blank" rel="external">#L704</a>，初始化<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/MessageSource.html" target="_blank" rel="external">MessageSource</a>，不过其实此时的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/MessageSource.html" target="_blank" rel="external">MessageSource</a>是个Noop对象。</li>
+<li><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L532" target="_blank" rel="external">AbstractApplicationContext#L532</a>-&gt;<code>initApplicationEventMulticaster()</code><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L739" target="_blank" rel="external">#L739</a>，初始化<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/event/SimpleApplicationEventMulticaster.html" target="_blank" rel="external">ApplicationEventMulticaster</a>。</li>
+<li><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L535" target="_blank" rel="external">AbstractApplicationContext#L535</a>-&gt;<code>onRefresh()</code><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L793" target="_blank" rel="external">#L793</a>，这个方法啥都没做</li>
+<li><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L538" target="_blank" rel="external">AbstractApplicationContext#L538</a>-&gt;<code>registerListeners()</code><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L801" target="_blank" rel="external">#L801</a>，把自己的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationListener.html" target="_blank" rel="external">ApplicationListener</a>注册到<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/event/SimpleApplicationEventMulticaster.html" target="_blank" rel="external">ApplicationEventMulticaster</a>里，并且将之前因为没有<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/event/SimpleApplicationEventMulticaster.html" target="_blank" rel="external">ApplicationEventMulticaster</a>而无法发出的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationEvent.html" target="_blank" rel="external">ApplicationEvent</a>发送出去。</li>
+<li><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L541" target="_blank" rel="external">AbstractApplicationContext#L541</a>-&gt;<code>finishBeanFactoryInitialization</code><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L828" target="_blank" rel="external">#L828</a>。注意<a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L861" target="_blank" rel="external">#L861</a>，在这一步的时候才会实例化所有non-lazy-init bean，这里说的实例化不只是new而已，注入、<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanPostProcessor.html" target="_blank" rel="external">BeanPostProcessor</a>都会执行。</li>
+<li><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L544" target="_blank" rel="external">AbstractApplicationContext#L544</a>-&gt;<code>finishRefresh()</code><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L869" target="_blank" rel="external">#L869</a>。<ol>
+<li>在<a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/AbstractApplicationContext.java#L877" target="_blank" rel="external">#L877</a>发送了<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/event/ContextRefreshedEvent.html" target="_blank" rel="external">ContextRefreshedEvent</a></li>
+</ol>
+</li>
+</ol>
+<h3 id="调用-ApplicationRunner-和-CommandLineRunner"><a href="#调用-ApplicationRunner-和-CommandLineRunner" class="headerlink" title="调用 ApplicationRunner 和 CommandLineRunner"></a>调用 ApplicationRunner 和 CommandLineRunner</h3><p><code>SpringApplication#run(args)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L297" target="_blank" rel="external">#L297</a><br>-&gt;<code>afterRefresh(context, applicationArguments)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L316" target="_blank" rel="external">#L316</a><br>-&gt;<code>callRunners(context, args)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L771" target="_blank" rel="external">#L771</a><br>-&gt;<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L774" target="_blank" rel="external">#L774</a> 先后调用了当前<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContext.html" target="_blank" rel="external">ApplicationContext</a>中的<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/ApplicationRunner.html" target="_blank" rel="external">ApplicationRunner</a>和<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/CommandLineRunner.html" target="_blank" rel="external">CommandLineRunner</a>。关于它们的相关文档可以看<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#boot-features-command-line-runner" target="_blank" rel="external">这里</a>。</p>
+<p>需要注意的是，此时的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContext.html" target="_blank" rel="external">ApplicationContext</a>已经刷新完毕了，该有的Bean都已经有了。</p>
+<h3 id="推送ApplicationReadyEvent-or-ApplicationFailedEvent"><a href="#推送ApplicationReadyEvent-or-ApplicationFailedEvent" class="headerlink" title="推送ApplicationReadyEvent or ApplicationFailedEvent"></a>推送ApplicationReadyEvent or ApplicationFailedEvent</h3><p><code>SpringApplication#run(args)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L297" target="_blank" rel="external">#L297</a>-&gt;<code>listeners.finished(context, null)</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L317" target="_blank" rel="external">#L317</a><br>间接地调用了<code>EventPublishingRunListener#getFinishedEvent</code><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/context/event/EventPublishingRunListener.java#L96" target="_blank" rel="external">EventPublishingRunListener#L96</a>，发送了<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/event/ApplicationReadyEvent.html" target="_blank" rel="external">ApplicationReadyEvent</a>或<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/event/ApplicationFailedEvent.html" target="_blank" rel="external">ApplicationFailedEvent</a></p>
+<h2 id="回调接口"><a href="#回调接口" class="headerlink" title="回调接口"></a>回调接口</h2><h3 id="ApplicationContextInitializer"><a href="#ApplicationContextInitializer" class="headerlink" title="ApplicationContextInitializer"></a>ApplicationContextInitializer</h3><p><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContextInitializer.html" target="_blank" rel="external">javadoc</a> <a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#howto-customize-the-environment-or-application-context" target="_blank" rel="external">相关文档</a></p>
+<p>加载方式：读取<code>classpath*:META-INF/spring.factories</code>中key等于<code>org.springframework.context.ApplicationContextInitializer</code>的property列出的类</p>
+<p>排序方式：<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/annotation/AnnotationAwareOrderComparator.html" target="_blank" rel="external">AnnotationAwareOrderComparator</a></p>
+<p>已知清单1：spring-boot-1.4.1.RELEASE.jar!/META-INF/spring.factories</p>
+<ol>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/ConfigurationWarningsApplicationContextInitializer.html" target="_blank" rel="external">ConfigurationWarningsApplicationContextInitializer</a>（优先级：0）</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/ContextIdApplicationContextInitializer.html" target="_blank" rel="external">ContextIdApplicationContextInitializer</a>（优先级：Ordered.LOWEST_PRECEDENCE - 10）</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/config/DelegatingApplicationContextInitializer.html" target="_blank" rel="external">DelegatingApplicationContextInitializer</a>（优先级：无=Ordered.LOWEST_PRECEDENCE）</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/web/ServerPortInfoApplicationContextInitializer.html" target="_blank" rel="external">ServerPortInfoApplicationContextInitializer</a>（优先级：无=Ordered.LOWEST_PRECEDENCE）</li>
+</ol>
+<p>已知清单2：spring-boot-autoconfigure-1.4.1.RELEASE.jar!/META-INF/spring.factories</p>
+<ol>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/SharedMetadataReaderFactoryContextInitializer.java" target="_blank" rel="external">SharedMetadataReaderFactoryContextInitializer</a>（优先级：无=Ordered.LOWEST_PRECEDENCE）</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/logging/AutoConfigurationReportLoggingInitializer.html" target="_blank" rel="external">AutoConfigurationReportLoggingInitializer</a>（优先级：无=Ordered.LOWEST_PRECEDENCE）</li>
+</ol>
+<h3 id="ApplicationListener"><a href="#ApplicationListener" class="headerlink" title="ApplicationListener"></a>ApplicationListener</h3><p><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationListener.html" target="_blank" rel="external">javadoc</a> <a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#howto-customize-the-environment-or-application-context" target="_blank" rel="external">相关文档</a></p>
+<p>加载方式：读取<code>classpath*:META-INF/spring.factories</code>中key等于<code>org.springframework.context.ApplicationListener</code>的property列出的类</p>
+<p>排序方式：<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/annotation/AnnotationAwareOrderComparator.html" target="_blank" rel="external">AnnotationAwareOrderComparator</a></p>
+<p>已知清单1：spring-boot-1.4.1.RELEASE.jar!/META-INF/spring.factories中定义的</p>
+<ol>
+<li><a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/ClearCachesApplicationListener.java" target="_blank" rel="external">ClearCachesApplicationListener</a>（优先级：无=Ordered.LOWEST_PRECEDENCE）</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/builder/ParentContextCloserApplicationListener.html" target="_blank" rel="external">ParentContextCloserApplicationListener</a>（优先级：Ordered.LOWEST_PRECEDENCE - 10）</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/FileEncodingApplicationListener.html" target="_blank" rel="external">FileEncodingApplicationListener</a>（优先级：Ordered.LOWEST_PRECEDENCE）</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/config/AnsiOutputApplicationListener.html" target="_blank" rel="external">AnsiOutputApplicationListener</a>（优先级：ConfigFileApplicationListener.DEFAULT_ORDER + 1）</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/config/ConfigFileApplicationListener.html" target="_blank" rel="external">ConfigFileApplicationListener</a>（优先级：Ordered.HIGHEST_PRECEDENCE + 10）</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/config/DelegatingApplicationListener.html" target="_blank" rel="external">DelegatingApplicationListener</a>（优先级：0)</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/liquibase/LiquibaseServiceLocatorApplicationListener.html" target="_blank" rel="external">LiquibaseServiceLocatorApplicationListener</a>（优先级：无=Ordered.LOWEST_PRECEDENCE）</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/logging/ClasspathLoggingApplicationListener.html" target="_blank" rel="external">ClasspathLoggingApplicationListener</a>（优先级：LoggingApplicationListener的优先级 + 1）</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/logging/LoggingApplicationListener.html" target="_blank" rel="external">LoggingApplicationListener</a>（优先级：Ordered.HIGHEST_PRECEDENCE + 20）</li>
+</ol>
+<p>已知清单2：spring-boot-autoconfigure-1.4.1.RELEASE.jar!/META-INF/spring.factories中定义的</p>
+<ol>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/BackgroundPreinitializer.html" target="_blank" rel="external">BackgroundPreinitializer</a></li>
+</ol>
+<h3 id="SpringApplicationRunListener"><a href="#SpringApplicationRunListener" class="headerlink" title="SpringApplicationRunListener"></a>SpringApplicationRunListener</h3><p><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/SpringApplicationRunListener.html" target="_blank" rel="external">javadoc</a> </p>
+<p>加载方式：读取<code>classpath*:META-INF/spring.factories</code>中key等于<code>org.springframework.boot.SpringApplicationRunListener</code>的property列出的类</p>
+<p>排序方式：<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/annotation/AnnotationAwareOrderComparator.html" target="_blank" rel="external">AnnotationAwareOrderComparator</a></p>
+<p>已知清单：spring-boot-1.4.1.RELEASE.jar!/META-INF/spring.factories定义的</p>
+<ol>
+<li>org.springframework.boot.context.event.EventPublishingRunListener（优先级：0）</li>
+</ol>
+<h3 id="EnvironmentPostProcessor"><a href="#EnvironmentPostProcessor" class="headerlink" title="EnvironmentPostProcessor"></a>EnvironmentPostProcessor</h3><p><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/env/EnvironmentPostProcessor.html" target="_blank" rel="external">EnvironmentPostProcessor</a>可以用来自定义<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/StandardEnvironment.html" target="_blank" rel="external">StandardEnvironment</a>（<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#howto-customize-the-environment-or-application-context" target="_blank" rel="external">相关文档</a>）。</p>
+<p>加载方式：读取<code>classpath*:META-INF/spring.factories</code>中key等于<code>org.springframework.boot.env.EnvironmentPostProcessor</code>的property列出的类</p>
+<p>排序方式：<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/annotation/AnnotationAwareOrderComparator.html" target="_blank" rel="external">AnnotationAwareOrderComparator</a></p>
+<p>已知清单：spring-boot-1.4.1.RELEASE.jar!/META-INF/spring.factories定义的</p>
+<ol>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/cloud/CloudFoundryVcapEnvironmentPostProcessor.html" target="_blank" rel="external">CloudFoundryVcapEnvironmentPostProcessor</a>（优先级：ConfigFileApplicationListener.DEFAULT_ORDER - 1）</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/env/SpringApplicationJsonEnvironmentPostProcessor.html" target="_blank" rel="external">SpringApplicationJsonEnvironmentPostProcessor</a>（优先级：Ordered.HIGHEST_PRECEDENCE + 5）</li>
+</ol>
+<h3 id="BeanPostProcessor"><a href="#BeanPostProcessor" class="headerlink" title="BeanPostProcessor"></a>BeanPostProcessor</h3><p><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanPostProcessor.html" target="_blank" rel="external">javadoc</a> <a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/spring-framework-reference/htmlsingle/#beans-factory-extension-bpp" target="_blank" rel="external">相关文档</a></p>
+<p>用来对Bean<strong>实例</strong>进行修改的勾子，根据Javadoc ApplicationContext会自动侦测到BeanPostProcessor Bean，然后将它们应用到后续创建的所有Bean上。</p>
+<h3 id="BeanFactoryPostProcessor和BeanDefinitionRegistryPostProcessor"><a href="#BeanFactoryPostProcessor和BeanDefinitionRegistryPostProcessor" class="headerlink" title="BeanFactoryPostProcessor和BeanDefinitionRegistryPostProcessor"></a>BeanFactoryPostProcessor和BeanDefinitionRegistryPostProcessor</h3><p><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/spring-framework-reference/htmlsingle/#beans-factory-extension-factory-postprocessors" target="_blank" rel="external">相关文档</a></p>
+<p><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/PostProcessorRegistrationDelegate.java#L57" target="_blank" rel="external">PostProcessorRegistrationDelegate</a>负责调用<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/support/BeanDefinitionRegistryPostProcessor.html" target="_blank" rel="external">BeanDefinitionRegistryPostProcessor</a>和<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanFactoryPostProcessor.html" target="_blank" rel="external">BeanFactoryPostProcessor</a>。<br><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/support/BeanDefinitionRegistryPostProcessor.html" target="_blank" rel="external">BeanDefinitionRegistryPostProcessor</a>在<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanFactoryPostProcessor.html" target="_blank" rel="external">BeanFactoryPostProcessor</a>之前被调用。</p>
+<h3 id="Aware"><a href="#Aware" class="headerlink" title="*Aware"></a>*Aware</h3><p>*Aware是一类可以用来获得Spring对象的interface，这些interface都继承了<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/Aware.html" target="_blank" rel="external">Aware</a>，已知的有：</p>
+<ul>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationEventPublisherAware.html" target="_blank" rel="external">ApplicationEventPublisherAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/jmx/export/notification/NotificationPublisherAware.html" target="_blank" rel="external">NotificationPublisherAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/MessageSourceAware.html" target="_blank" rel="external">MessageSourceAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/EnvironmentAware.html" target="_blank" rel="external">EnvironmentAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/BeanFactoryAware.html" target="_blank" rel="external">BeanFactoryAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/EmbeddedValueResolverAware.html" target="_blank" rel="external">EmbeddedValueResolverAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ResourceLoaderAware.html" target="_blank" rel="external">ResourceLoaderAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ImportAware.html" target="_blank" rel="external">ImportAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/weaving/LoadTimeWeaverAware.html" target="_blank" rel="external">LoadTimeWeaverAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/BeanNameAware.html" target="_blank" rel="external">BeanNameAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/BeanClassLoaderAware.html" target="_blank" rel="external">BeanClassLoaderAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContextAware.html" target="_blank" rel="external">ApplicationContextAware</a></li>
+</ul>
+<h2 id="Configuration-和-Auto-configuration"><a href="#Configuration-和-Auto-configuration" class="headerlink" title="@Configuration 和 Auto-configuration"></a>@Configuration 和 Auto-configuration</h2><p><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>替代xml来定义<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanDefinition.html" target="_blank" rel="external">BeanDefinition</a>的一种手段。<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration" target="_blank" rel="external">Auto-configuration</a>也是定义<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanDefinition.html" target="_blank" rel="external">BeanDefinition</a>的一种手段。</p>
+<p>这两者的相同之处有：</p>
+<ol>
+<li>都是使用<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>注解的类，这些类里都可以定义<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Bean.html" target="_blank" rel="external">@Bean</a>、<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Import.html" target="_blank" rel="external">@Import</a>、<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ImportResource.html" target="_blank" rel="external">@ImportResource</a>。</li>
+<li>都可以使用<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#boot-features-condition-annotations" target="_blank" rel="external">@Condition*</a>来根据情况选择是否加载</li>
+</ol>
+<p>而不同之处有：</p>
+<ol>
+<li>加载方式不同：<ul>
+<li>普通<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>则是通过扫描package path加载的 </li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration" target="_blank" rel="external">Auto-configuration</a>的是通过读取<code>classpath*:META-INF/spring.factories</code>中key等于<code>org.springframework.boot.autoconfigure.EnableAutoConfiguration</code>的property列出的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>加载的</li>
+</ul>
+</li>
+<li>加载顺序不同：普通<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>的加载在<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration" target="_blank" rel="external">Auto-configuration</a>之前，但是有例外情况，看下面。</li>
+<li>内部加载顺序可控上的不同：<ul>
+<li>普通<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>则无法控制加载顺序</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration" target="_blank" rel="external">Auto-configuration</a>可以使用<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/AutoConfigureOrder.html" target="_blank" rel="external">@AutoConfigureOrder</a>、<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/AutoConfigureBefore.html" target="_blank" rel="external">@AutoConfigureBefore</a>、<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/AutoConfigureAfter.html" target="_blank" rel="external">@AutoConfigureAfter</a></li>
+</ul>
+</li>
+</ol>
+<p>以下情况下<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration" target="_blank" rel="external">Auto-configuration</a>会在普通<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>前加载：</p>
+<ol>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration" target="_blank" rel="external">Auto-configuration</a>如果出现在最初的扫描路径里（@ComponentScan），就会被提前加载到，然后被当作普通的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>处理，这样<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/AutoConfigureBefore.html" target="_blank" rel="external">@AutoConfigureBefore</a>和<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/AutoConfigureAfter.html" target="_blank" rel="external">@AutoConfigureAfter</a>就没用了。参看例子代码里的InsideAutoConfiguration和InsideAutoConfiguration2。</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration" target="_blank" rel="external">Auto-configuration</a>如果提供<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanPostProcessor.html" target="_blank" rel="external">BeanPostProcessor</a>，那么它会被提前加载。参见例子代码里的BeanPostProcessorAutoConfiguration。</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration" target="_blank" rel="external">Auto-configuration</a>如果使用了<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ImportBeanDefinitionRegistrar.html" target="_blank" rel="external">ImportBeanDefinitionRegistrar</a>，那么<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ImportBeanDefinitionRegistrar.html" target="_blank" rel="external">ImportBeanDefinitionRegistrar</a>会被提前加载。参见例子代码里的ImportBeanDefinitionRegistrarAutoConfiguration。</li>
+<li><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration" target="_blank" rel="external">Auto-configuration</a>如果使用了<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ImportSelector.html" target="_blank" rel="external">ImportSelector</a>，那么<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ImportSelector.html" target="_blank" rel="external">ImportSelector</a>会被提前加载。参见例子代码里的UselessDeferredImportSelectorAutoConfiguration。</li>
+</ol>
+<p>参考<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html" target="_blank" rel="external">EnableAutoConfiguration</a>和附录<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/EnableAutoConfigurationImportSelector.html" target="_blank" rel="external">EnableAutoConfigurationImportSelector</a>了解Spring boot内部处理机制。</p>
+<h3 id="AnnotatedBeanDefinitionReader"><a href="#AnnotatedBeanDefinitionReader" class="headerlink" title="AnnotatedBeanDefinitionReader"></a>AnnotatedBeanDefinitionReader</h3><p>这个类用来读取<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>和<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/stereotype/Component.html" target="_blank" rel="external">@Component</a>，并将<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanDefinition.html" target="_blank" rel="external">BeanDefinition</a>注册到<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContext.html" target="_blank" rel="external">ApplicationContext</a>里。</p>
+<h3 id="ConfigurationClassPostProcessor"><a href="#ConfigurationClassPostProcessor" class="headerlink" title="ConfigurationClassPostProcessor"></a>ConfigurationClassPostProcessor</h3><p><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ConfigurationClassPostProcessor.html" target="_blank" rel="external">ConfigurationClassPostProcessor</a>是一个<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/support/BeanDefinitionRegistryPostProcessor.html" target="_blank" rel="external">BeanDefinitionRegistryPostProcessor</a>，负责处理<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>。</p>
+<p>需要注意一个烟雾弹：看<a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/annotation/ConfigurationClassPostProcessor.java#L296" target="_blank" rel="external">#L296</a>-&gt;<a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/annotation/ConfigurationClassUtils.java#L209" target="_blank" rel="external">ConfigurationClassUtils#L209</a>。而order的值则是在<a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/annotation/ConfigurationClassUtils.java#L122" target="_blank" rel="external">ConfigurationClassUtils#L122</a>从注解中提取的。<br>这段代码似乎告诉我们它会对<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>进行排序，然后按次序加载。<br>实际上不是的，<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>是一个递归加载的过程。在本例中，是先从SampleApplication开始加载的，而事实上在这个时候，也就只有SampleApplication它自己可以提供排序。<br>而之后则直接使用了<a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/annotation/ConfigurationClassParser.java" target="_blank" rel="external">ConfigurationClassParser</a>，它里面并没有排序的逻辑。</p>
+<p>关于排序的方式简单来说是这样的：<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>的排序根据且只根据<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/annotation/Order.html" target="_blank" rel="external">@Order</a>排序，如果没有<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/annotation/Order.html" target="_blank" rel="external">@Order</a>则优先级最低。</p>
+<h3 id="ConfigurationClassParser"><a href="#ConfigurationClassParser" class="headerlink" title="ConfigurationClassParser"></a>ConfigurationClassParser</h3><p>前面讲了<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ConfigurationClassPostProcessor.html" target="_blank" rel="external">ConfigurationClassPostProcessor</a>使用<a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/annotation/ConfigurationClassParser.java" target="_blank" rel="external">ConfigurationClassParser</a>，实际上加载<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>的工作是在这里做的。</p>
+<p>下面讲以下加载的顺序：</p>
+<ol>
+<li>以SampleApplication为起点开始扫描</li>
+<li>扫描得到所有的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>和<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/stereotype/Component.html" target="_blank" rel="external">@Component</a>，从中读取<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanDefinition.html" target="_blank" rel="external">BeanDefinition</a>并导入：<ol>
+<li>如果<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>注解了<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Import.html" target="_blank" rel="external">@Import</a><ol>
+<li>如果使用的是<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ImportSelector.html" target="_blank" rel="external">ImportSelector</a>，则递归导入</li>
+<li>如果使用的是<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ImportBeanDefinitionRegistrar.html" target="_blank" rel="external">ImportBeanDefinitionRegistrar</a>，则递归导入</li>
+<li>如果使用的是<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/DeferredImportSelector.html" target="_blank" rel="external">DeferredImportSelector</a>，则仅收集不导入</li>
+</ol>
+</li>
+<li>如果<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>注解了<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ImportResource.html" target="_blank" rel="external">@ImportResource</a>，则递归导入</li>
+</ol>
+</li>
+<li>迭代之前收集的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/DeferredImportSelector.html" target="_blank" rel="external">DeferredImportSelector</a>，递归导入</li>
+</ol>
+<p>那<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration" target="_blank" rel="external">Auto-configuration</a>在哪里呢？<br>实际上是在第3步里，<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/SpringBootApplication.html" target="_blank" rel="external">@SpringBootApplication</a>存在注解<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/EnableAutoConfiguration.html" target="_blank" rel="external">@EnableAutoConfiguration</a>，它使用了<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/EnableAutoConfigurationImportSelector.html" target="_blank" rel="external">EnableAutoConfigurationImportSelector</a>，<br><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/EnableAutoConfigurationImportSelector.html" target="_blank" rel="external">EnableAutoConfigurationImportSelector</a>是一个<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/DeferredImportSelector.html" target="_blank" rel="external">DeferredImportSelector</a>，所以也就是说，<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration" target="_blank" rel="external">Auto-configuration</a>是在普通<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>之后再加载的。</p>
+<p>顺带一提，如果<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration" target="_blank" rel="external">Auto-configuration</a>里再使用<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/DeferredImportSelector.html" target="_blank" rel="external">DeferredImportSelector</a>，那么效果和使用<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ImportSelector.html" target="_blank" rel="external">ImportSelector</a>效果是一样的，不会再被延后处理。参见例子代码里的UselessDeferredImportSelectorAutoConfiguration。</p>
+<h3 id="EnableAutoConfigurationImportSelector"><a href="#EnableAutoConfigurationImportSelector" class="headerlink" title="EnableAutoConfigurationImportSelector"></a>EnableAutoConfigurationImportSelector</h3><p><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/EnableAutoConfigurationImportSelector.html" target="_blank" rel="external">EnableAutoConfigurationImportSelector</a>负责导入<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration" target="_blank" rel="external">Auto-configuration</a>。</p>
+<p>它利用<a href="https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot-autoconfigure/src/main/java/org/springframework/boot/autoconfigure/AutoConfigurationSorter.java" target="_blank" rel="external">AutoConfigurationSorter</a>对<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#using-boot-auto-configuration" target="_blank" rel="external">Auto-configuration</a>进行排序。逻辑算法是：</p>
+<ol>
+<li>先根据类名排序</li>
+<li>再根据<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/AutoConfigureOrder.html" target="_blank" rel="external">@AutoConfigureOrder</a>排序，如果没有<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/AutoConfigureOrder.html" target="_blank" rel="external">@AutoConfigureOrder</a>则优先级最低</li>
+<li>再根据<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/AutoConfigureBefore.html" target="_blank" rel="external">@AutoConfigureBefore</a>，<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/autoconfigure/AutoConfigureAfter.html" target="_blank" rel="external">@AutoConfigureAfter</a>排序</li>
+</ol>
+<h2 id="内置类说明"><a href="#内置类说明" class="headerlink" title="内置类说明"></a>内置类说明</h2><h3 id="LoggingApplicationListener"><a href="#LoggingApplicationListener" class="headerlink" title="LoggingApplicationListener"></a>LoggingApplicationListener</h3><p><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/logging/LoggingApplicationListener.html" target="_blank" rel="external">LoggingApplicationListener</a>用来配置日志系统的，比如logback、log4j。Spring boot对于日志有<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#boot-features-logging" target="_blank" rel="external">详细解释</a>，如果你想<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/reference/htmlsingle/#boot-features-custom-log-configuration" target="_blank" rel="external">自定义日志配置</a>，那么也请参考本文中对于<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/logging/LoggingApplicationListener.html" target="_blank" rel="external">LoggingApplicationListener</a>的被调用时机的说明以获得更深入的了解。</p>
+<h3 id="StandardEnvironment"><a href="#StandardEnvironment" class="headerlink" title="StandardEnvironment"></a>StandardEnvironment</h3><p><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/StandardEnvironment.html" target="_blank" rel="external">StandardEnvironment</a>有一个<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/MutablePropertySources.html" target="_blank" rel="external">MutablePropertySources</a>，它里面有多个<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/PropertySource.html" target="_blank" rel="external">PropertySource</a>，<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/PropertySource.html" target="_blank" rel="external">PropertySource</a>负责提供property（即property的提供源），目前已知的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/PropertySource.html" target="_blank" rel="external">PropertySource</a>实现有：<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/MapPropertySource.html" target="_blank" rel="external">MapPropertySource</a>、<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/SystemEnvironmentPropertySource.html" target="_blank" rel="external">SystemEnvironmentPropertySource</a>、<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/CommandLinePropertySource.html" target="_blank" rel="external">CommandLinePropertySource</a>等。当<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/StandardEnvironment.html" target="_blank" rel="external">StandardEnvironment</a>查找property值的时候，是从<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/MutablePropertySources.html" target="_blank" rel="external">MutablePropertySources</a>里依次查找的，而且一旦查找到就不再查找，也就是说如果要覆盖property的值，那么就得提供顺序在前的<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/PropertySource.html" target="_blank" rel="external">PropertySource</a>。</p>
+<h3 id="ConfigFileApplicationListener"><a href="#ConfigFileApplicationListener" class="headerlink" title="ConfigFileApplicationListener"></a>ConfigFileApplicationListener</h3><p><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/config/ConfigFileApplicationListener.html" target="_blank" rel="external">ConfigFileApplicationListener</a>用来将<code>application.properties</code>加载到<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/StandardEnvironment.html" target="_blank" rel="external">StandardEnvironment</a>中。</p>
+<p><a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/context/config/ConfigFileApplicationListener.html" target="_blank" rel="external">ConfigFileApplicationListener</a>内部使用了<a href="http://docs.spring.io/spring-boot/docs/1.4.1.RELEASE/api/org/springframework/boot/env/EnvironmentPostProcessor.html" target="_blank" rel="external">EnvironmentPostProcessor</a>（见附录）自定义<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/core/env/StandardEnvironment.html" target="_blank" rel="external">StandardEnvironment</a></p>
+<h3 id="ApplicationContextAwareProcessor"><a href="#ApplicationContextAwareProcessor" class="headerlink" title="ApplicationContextAwareProcessor"></a>ApplicationContextAwareProcessor</h3><p><a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/support/ApplicationContextAwareProcessor.java" target="_blank" rel="external">ApplicationContextAwareProcessor</a>实现了<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanPostProcessor.html" target="_blank" rel="external">BeanPostProcessor</a>接口，根据javadoc这个类用来调用以下接口的回调方法：</p>
+<ol>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/EnvironmentAware.html" target="_blank" rel="external">EnvironmentAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/EmbeddedValueResolverAware.html" target="_blank" rel="external">EmbeddedValueResolverAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ResourceLoaderAware.html" target="_blank" rel="external">ResourceLoaderAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationEventPublisherAware.html" target="_blank" rel="external">ApplicationEventPublisherAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/MessageSourceAware.html" target="_blank" rel="external">MessageSourceAware</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/ApplicationContextAware.html" target="_blank" rel="external">ApplicationContextAware</a></li>
+</ol>
+<h3 id="AnnotationConfigApplicationContext"><a href="#AnnotationConfigApplicationContext" class="headerlink" title="AnnotationConfigApplicationContext"></a>AnnotationConfigApplicationContext</h3><p>根据<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/AnnotationConfigApplicationContext.html" target="_blank" rel="external">javadoc</a>，这个类用来将<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>和<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/stereotype/Component.html" target="_blank" rel="external">@Component</a>作为输入来注册BeanDefinition。</p>
+<p>特别需要注意的是，在<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/AnnotationConfigApplicationContext.html" target="_blank" rel="external">javadoc</a>中讲到其支持@Bean的覆盖：</p>
+<blockquote>
+<p>In case of multiple @Configuration classes, @Bean methods defined in later classes will override those defined in earlier classes. This can be leveraged to deliberately override certain bean definitions via an extra @Configuration class.</p>
+</blockquote>
+<p>它使用<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/AnnotatedBeanDefinitionReader.html" target="_blank" rel="external">AnnotatedBeanDefinitionReader</a>来读取<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/Configuration.html" target="_blank" rel="external">@Configuration</a>和<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/stereotype/Component.html" target="_blank" rel="external">@Component</a>。</p>
+<h3 id="AnnotatedBeanDefinitionReader-1"><a href="#AnnotatedBeanDefinitionReader-1" class="headerlink" title="AnnotatedBeanDefinitionReader"></a>AnnotatedBeanDefinitionReader</h3><p><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/AnnotatedBeanDefinitionReader.html" target="_blank" rel="external">AnnotatedBeanDefinitionReader</a>在其构造函数内部间接(<a href="https://github.com/spring-projects/spring-framework/blob/v4.3.3.RELEASE/spring-context/src/main/java/org/springframework/context/annotation/AnnotationConfigUtils.java#L145" target="_blank" rel="external">AnnotationConfigUtils#L145</a>)的给<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/BeanFactory.html" target="_blank" rel="external">BeanFactory</a>注册了几个与<a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/config/BeanDefinition.html" target="_blank" rel="external">BeanDefinition</a>相关注解的处理器。</p>
+<ol>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/ConfigurationClassPostProcessor.html" target="_blank" rel="external">ConfigurationClassPostProcessor</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/annotation/AutowiredAnnotationBeanPostProcessor.html" target="_blank" rel="external">AutowiredAnnotationBeanPostProcessor</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/beans/factory/annotation/RequiredAnnotationBeanPostProcessor.html" target="_blank" rel="external">RequiredAnnotationBeanPostProcessor</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/annotation/CommonAnnotationBeanPostProcessor.html" target="_blank" rel="external">CommonAnnotationBeanPostProcessor</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/context/event/EventListenerMethodProcessor.html" target="_blank" rel="external">EventListenerMethodProcessor</a></li>
+<li><a href="http://docs.spring.io/spring/docs/4.3.3.RELEASE/javadoc-api/org/springframework/orm/jpa/support/PersistenceAnnotationBeanPostProcessor.html" target="_blank" rel="external">PersistenceAnnotationBeanPostProcessor</a></li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/spring/" rel="tag"># spring</a>
+          
+            <a href="/tags/java/" rel="tag"># java</a>
+          
+            <a href="/tags/springboot/" rel="tag"># springboot</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/07/08/ClassPathXmlApplicationContext加载过程/" rel="next" title="ClassPathXmlApplicationContext加载过程">
+                <i class="fa fa-chevron-left"></i> ClassPathXmlApplicationContext加载过程
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2017/07/11/小游戏/" rel="prev" title="小游戏">
+                小游戏 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="CYeJing" />
+          <p class="site-author-name" itemprop="name">CYeJing</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">4</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">5</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Spring-Boot启动过程及回调接口汇总"><span class="nav-number">1.</span> <span class="nav-text">Spring Boot启动过程及回调接口汇总</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#启动顺序"><span class="nav-number">1.1.</span> <span class="nav-text">启动顺序</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#初始化SpringApplication"><span class="nav-number">1.1.1.</span> <span class="nav-text">初始化SpringApplication</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#推送ApplicationStartedEvent"><span class="nav-number">1.1.2.</span> <span class="nav-text">推送ApplicationStartedEvent</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#准备Environment"><span class="nav-number">1.1.3.</span> <span class="nav-text">准备Environment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#创建及准备ApplicationContext"><span class="nav-number">1.1.4.</span> <span class="nav-text">创建及准备ApplicationContext</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#刷新ApplicationContext"><span class="nav-number">1.1.5.</span> <span class="nav-text">刷新ApplicationContext</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#调用-ApplicationRunner-和-CommandLineRunner"><span class="nav-number">1.1.6.</span> <span class="nav-text">调用 ApplicationRunner 和 CommandLineRunner</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#推送ApplicationReadyEvent-or-ApplicationFailedEvent"><span class="nav-number">1.1.7.</span> <span class="nav-text">推送ApplicationReadyEvent or ApplicationFailedEvent</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#回调接口"><span class="nav-number">1.2.</span> <span class="nav-text">回调接口</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#ApplicationContextInitializer"><span class="nav-number">1.2.1.</span> <span class="nav-text">ApplicationContextInitializer</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ApplicationListener"><span class="nav-number">1.2.2.</span> <span class="nav-text">ApplicationListener</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#SpringApplicationRunListener"><span class="nav-number">1.2.3.</span> <span class="nav-text">SpringApplicationRunListener</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EnvironmentPostProcessor"><span class="nav-number">1.2.4.</span> <span class="nav-text">EnvironmentPostProcessor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BeanPostProcessor"><span class="nav-number">1.2.5.</span> <span class="nav-text">BeanPostProcessor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#BeanFactoryPostProcessor和BeanDefinitionRegistryPostProcessor"><span class="nav-number">1.2.6.</span> <span class="nav-text">BeanFactoryPostProcessor和BeanDefinitionRegistryPostProcessor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#Aware"><span class="nav-number">1.2.7.</span> <span class="nav-text">*Aware</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Configuration-和-Auto-configuration"><span class="nav-number">1.3.</span> <span class="nav-text">@Configuration 和 Auto-configuration</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#AnnotatedBeanDefinitionReader"><span class="nav-number">1.3.1.</span> <span class="nav-text">AnnotatedBeanDefinitionReader</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConfigurationClassPostProcessor"><span class="nav-number">1.3.2.</span> <span class="nav-text">ConfigurationClassPostProcessor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConfigurationClassParser"><span class="nav-number">1.3.3.</span> <span class="nav-text">ConfigurationClassParser</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#EnableAutoConfigurationImportSelector"><span class="nav-number">1.3.4.</span> <span class="nav-text">EnableAutoConfigurationImportSelector</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#内置类说明"><span class="nav-number">1.4.</span> <span class="nav-text">内置类说明</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#LoggingApplicationListener"><span class="nav-number">1.4.1.</span> <span class="nav-text">LoggingApplicationListener</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#StandardEnvironment"><span class="nav-number">1.4.2.</span> <span class="nav-text">StandardEnvironment</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ConfigFileApplicationListener"><span class="nav-number">1.4.3.</span> <span class="nav-text">ConfigFileApplicationListener</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#ApplicationContextAwareProcessor"><span class="nav-number">1.4.4.</span> <span class="nav-text">ApplicationContextAwareProcessor</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AnnotationConfigApplicationContext"><span class="nav-number">1.4.5.</span> <span class="nav-text">AnnotationConfigApplicationContext</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#AnnotatedBeanDefinitionReader-1"><span class="nav-number">1.4.6.</span> <span class="nav-text">AnnotatedBeanDefinitionReader</span></a></li></ol></li></ol></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2017</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CYeJing</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Pisces
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+
+  <script type="text/javascript" src="/js/src/affix.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/schemes/pisces.js?v=5.1.0"></script>
+
+
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("CA6DTKzeiOCnPArrdn9jsWRn-gzGzoHsz", "HhUohfVVfMV2KmqevJ1Aha54");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+
+  
+
+  
+
+</body>
+</html>
