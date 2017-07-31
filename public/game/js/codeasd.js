@@ -1,16 +1,10 @@
-/* 
- * To change this license header, choose License Headers in Project Properties.
- * To change this template file, choose Tools | Templates
- * and open the template in the editor.
- */
-
-(function ($, d, w) {
+(function ($, d, w, AV) {
 
     var model = {
         matrix: new Matrix(),
         size: 0, boxWidth: 0,
         Total: [300, 800, 1500, 2500], oldScore: 0, level: 0, progress: 0, score: 0, combo: 0, multiple: 1.3,
-        nextColor: new Array(), nextArr: new Array(), nextNum: 3,
+        nextColor: new Array(), nextArr: new Array(), nextNum: 3, objectId: null, userName: "anonymous",
         doAnimate: false, boxSelected: null, $table: null,
         $boxtemp: null, $boxClone: null,
         color: {yellow: "yellow", red: "red", blue: "blue", green: "green", purple: "purple"},
@@ -57,13 +51,13 @@
 
     function Matrix(arrO) {
         var arr;
-        if(arrO == null){
+        if (arrO == null) {
             arr = [new Array(9), new Array(9), new Array(9), new Array(9), new Array(9), new Array(9), new Array(9), new Array(9), new Array(9)];
-        }else{
+        } else {
             for (var x = 1; x <= 7; x++) {
                 for (var y = 1; y <= 7; y++) {
-                    if(arrO[x][y] != null){
-                        arrO[x][y] = new model.Point(arrO[x][y].x,arrO[x][y].y,arrO[x][y].color)
+                    if (arrO[x][y] != null) {
+                        arrO[x][y] = new model.Point(arrO[x][y].x, arrO[x][y].y, arrO[x][y].color)
                     }
                 }
             }
@@ -171,8 +165,7 @@
                 height: model.boxWidth + 60 + "px",
                 width: model.boxWidth + 60 + "px",
                 opacity: .2
-            })
-                .removeClass().addClass(point.color).show();
+            }).removeClass().addClass(point.color).show();
             model.$table.parent().append(boxClone);
             boxClone.animate({
                     left: left + 1,
@@ -234,7 +227,7 @@
         },
         levelUp: function (num) {
             $(".progress-bar").attr("aria-valuenow", num).attr("aria-valuemax", model.Total[model.level]).css("width", 0);
-            $(".progress-bar span").text(model.level+1)
+            $(".progress-bar span").text(model.level + 1)
         },
         progressUp: function (num) {
             $(".progress-bar").attr("aria-valuenow", num).css("width", num / model.getCurrentScoreDiff() * 100 + "%");
@@ -270,12 +263,15 @@
             elem.find("td").css("height", model.boxWidth + "px"); //设置td的高度
             model.$boxClone.css({height: model.boxWidth + 4 + "px", width: model.boxWidth + 4 + "px"});
             model.$table.parent().append(model.$boxClone);
-            control.handleBox.nextColor()  //随机出point备用
+
+            util.newAVObject();
+
+            control.handleBox.nextColor();  //随机出point备用
             control.handleBox.setNextPoint();  //放置点
             control.action.prepare();
 
         },
-        initStorage: function(elem,omodel){
+        initStorage: function (elem, omodel) {
             model.$table = $(elem);
             model.$boxtemp = $(".boxtemp");
             model.$boxClone = model.$boxtemp.clone();
@@ -286,13 +282,13 @@
                 var $td;
                 $tbody.append($tr);
                 for (var y = 1; y <= 7; y++) {
-                    if(omodel.matrix[x][y] != null){
+                    if (omodel.matrix[x][y] != null) {
                         var $td = $("<td class='clickBox'></td>")
                             .attr("data-pointX", omodel.matrix[x][y].x)
                             .attr("data-pointY", omodel.matrix[x][y].y)
                             .attr("data-color", omodel.matrix[x][y].color)
                             .addClass(omodel.matrix[x][y].color);
-                    }else{
+                    } else {
                         $td = $("<td class='clickBox'></td>")
                             .attr("data-pointX", x).attr("data-pointY", y).attr("data-color", "none");
                     }
@@ -313,6 +309,9 @@
             model.nextNum = omodel.nextNum;
             model.size = omodel.size;
             model.nextColor = omodel.nextColor;
+            model.objectId = omodel.objectId;
+            localStorage.setItem("objectId", model.objectId);
+            model.userName = omodel.userName;
             /*初始化*/
 
             view.showNextColor(); // 显示下一个颜色
@@ -358,10 +357,10 @@
                         model.matrix.setPoint(model.nextArr[i]);
                         control.handleBox.checkPoint(model.nextArr[i]);
                         if (model.matrix.getSize() === 49) {
-                            alert("游戏结束!获得总分:" + model.score + "! 再接再厉!");
+                            alert("game over! You get a score of " + model.score + "!");
                             localStorage.removeItem("model");
                             localStorage.removeItem("modelKey");
-                            location.reload();
+                            location.href = "ranking.html";
                             return;
                         }
                         control.handleBox.setPoint(i + 1);
@@ -385,7 +384,7 @@
                 view.boxMove(point, model.boxSelected, boxPathArr, function () {
                     if (!control.handleBox.checkPoint(point)) {   //不能清除时
                         control.handleBox.setNextPoint();
-                    }else{
+                    } else {
                         util.serializeModel();
                     }
                     model.boxSelected = null;
@@ -401,6 +400,7 @@
                     });
                     control.handleBox.scoreUp(SuccessArr.length);
                     control.handleBox.comboUp();
+                    util.updateAVObject();
                     return true;
                 } else {
                     control.handleBox.comboClear();
@@ -418,9 +418,6 @@
                 model.score += score;
                 model.progress += score;
                 if (model.score > model.Total[model.level]) {
-                    if (model.level >= 3) {
-                        alert("牛逼!");
-                    }
                     model.progress = model.score - model.Total[model.level];
                     model.level++;
                     model.nextNum++;
@@ -503,8 +500,16 @@
                 }
                 if (tempArr.length >= 4)
                     SuccessArr = SuccessArr.concat(tempArr);
-                if (SuccessArr.length)
+
+                if (SuccessArr.length) {
+                    for (var i = 0; i < SuccessArr.length; i++) {
+                        if (SuccessArr[i].x == point.x && SuccessArr[i].y == point.y) {
+                            SuccessArr.splice(i, 1);
+                        }
+                    }
+                    SuccessArr.push(point);
                     return SuccessArr;
+                }
                 else
                     return false;
             },
@@ -642,41 +647,68 @@
             return arr;
         },
         serializeModel: function () {
-            var modelStr = JSON.stringify(model)
+            var modelStr = JSON.stringify(model);
             localStorage.setItem("model", modelStr);
             localStorage.setItem("modelKey", util.checkmmmm(modelStr));
         },
         unSerializeModel: function () {
             var modelStr = localStorage.getItem("model");
-            var modelKey = localStorage.getItem("modelKey")
-            if(modelStr == null || modelKey == null){
+            var modelKey = localStorage.getItem("modelKey");
+            if (modelStr == null || modelKey == null) {
                 return null;
             }
-            var modelKeyN = util.checkmmmm(modelStr)
-            if(modelKeyN !== modelKey){
-                alert("请不要篡改游戏数据!")
-                localStorage.removeItem("model")
-                localStorage.removeItem("modelKey")
+            var modelKeyN = util.checkmmmm(modelStr);
+            if (modelKeyN !== modelKey) {
+                alert("don't tamper with game data!");
+                localStorage.removeItem("model");
+                localStorage.removeItem("modelKey");
                 location.reload();
-            }else{
+            } else {
                 return JSON.parse(modelStr)
             }
         },
-        checkmmmm:function (modelStr) {
-            var key = hex_md5(util.key)
+        checkmmmm: function (modelStr) {
+            var key = hex_md5(util.key);
             var md5 = b64_hmac_md5(modelStr, key);
             return hex_md5(md5);
+        },
+        newAVObject: function () {
+            var Ranking = AV.Object.extend('Ranking');
+            var ranking = new Ranking();
+            ranking.set('score', model.score);
+            ranking.set('combo', model.combo);
+            ranking.set('name', model.userName);
+            ranking.set('userAgent', navigator.userAgent);
+            ranking.save().then(function (ranking) {
+                model.objectId = ranking.id;
+                localStorage.setItem("objectId", model.objectId);
+            }, function (error) {
+                console.log("access leanCloud have some error:" + error);
+            });
+        },
+        updateAVObject: function () {
+            var ranking = AV.Object.createWithoutData('Ranking', model.objectId);
+            ranking.set('score', model.score);
+            ranking.set('combo', model.combo);
+            ranking.save().then(function (ranking) {
+                if (!model.objectId) {
+                    model.objectId = ranking.id;
+                    localStorage.setItem("objectId", model.objectId);
+                }
+            });
         }
     };
     $.fn.game = function () {
-//        options = $.extend({}, $.fn.notebook.defaults, options);
-        var omodel = util.unSerializeModel()
-        if(omodel != null){
-            control.initStorage(this,omodel);
-        }else{
+
+        var omodel = util.unSerializeModel();
+        if (omodel != null) {
+            control.initStorage(this, omodel);
+        } else {
             control.init(this);
         }
         return this;
     };
-})(jQuery, document, window);
-
+    var APP_ID = 'CA6DTKzeiOCnPArrdn9jsWRn-gzGzoHsz';
+    var APP_KEY = 'HhUohfVVfMV2KmqevJ1Aha54';
+    AV.initialize(APP_ID, APP_KEY);
+})(jQuery, document, window, AV);

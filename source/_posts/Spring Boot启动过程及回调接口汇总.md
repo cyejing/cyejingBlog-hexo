@@ -30,7 +30,6 @@ public class SampleApplication {
     3. [SpringApplication#L263][code-SpringApplicationL263] 初始化[ApplicationListener][core-ApplicationListener]列表（见附录）
 3. [SpringApplication#L1186][code-SpringApplicationL1186] -> ``SpringApplication#run(args)``[#L297][code-SpringApplicationL297]，进入运行阶段
 
-<!--more-->
 ### 推送ApplicationStartedEvent
 
 ``SpringApplication#run(args)``[#L297][code-SpringApplicationL297]
@@ -39,6 +38,14 @@ public class SampleApplication {
 2. [SpringApplication#L304][code-SpringApplicationL304] 推送[ApplicationStartedEvent][boot-ApplicationStartedEvent]给所有的[ApplicationListener][core-ApplicationListener]（见附录）。 下面是关心此事件的listener：
     1. [LiquibaseServiceLocatorApplicationListener][boot-LiquibaseServiceLocatorApplicationListener]
     2. [LoggingApplicationListener][boot-LoggingApplicationListener]（见附录）
+
+### 解析spring.factories初始化实现类
+
+1. [SpringApplication#397][SpringApplication.java#L397]通过``SpringFactoriesLoader``查找出相关接口的实现类
+
+2. 实例化并放入ApplicationContext里面等待调用
+
+   ​
 
 ### 准备Environment
 
@@ -57,6 +64,8 @@ public class SampleApplication {
   8. [ApplicationPidFileWriter][boot-ApplicationPidFileWriter]
 
 可以参考[官方文档][ref-boot-features-external-config]了解[StandardEnvironment][core-StandardEnvironment]构建好之后，其[MutablePropertySources][core-MutablePropertySources]内部到底有些啥东东。
+
+<!--more-->
 
 ### 创建及准备ApplicationContext
 
@@ -446,6 +455,7 @@ public class SampleApplication {
 [code-SpringApplication#L687]: https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L687
 [code-SpringApplicationL1174]: https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L1174
 [code-SpringApplicationL1186]: https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L1186
+[SpringApplication.java#L397]: https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L397
 [code-SpringApplicationL236]: https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L236
 [code-SpringApplicationL256]: https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L256
 [code-SpringApplicationL257]: https://github.com/spring-projects/spring-boot/blob/v1.4.1.RELEASE/spring-boot/src/main/java/org/springframework/boot/SpringApplication.java#L257
