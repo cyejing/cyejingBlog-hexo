@@ -1,6 +1,7 @@
 ---
 title : Spring Boot启动过程及回调接口汇总
 tags : [java,spring,springboot]
+date: 2017-07-10
 ---
 # Spring Boot启动过程及回调接口汇总
 

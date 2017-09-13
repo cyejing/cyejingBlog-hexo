@@ -1,6 +1,7 @@
 ---
 title: Bean的加载流程概览
 tags : [spring,java]
+date : 2017-06-16
 ---
 
 下面有很简单的一段代码可以作为Spring代码加载的入口：
