@@ -336,14 +336,17 @@ changyan:
 
 # Google Webmaster tools verification setting
 # See: https://www.google.com/webmasters/
-#google_site_verification:
+google_site_verification: true
+
 
 # Google Analytics
 google_analytics: UA-102322008-1
 
 # Yandex Webmaster tools verification setting
 # See: https://webmaster.yandex.ru/
-#yandex_site_verification:
+yandex_site_verification: true
+baidu_site_verification: true
+
 
 # CNZZ count
 # cnzz_siteid: 1262780252
