@@ -15,7 +15,7 @@ date : 2017-10-06
 <dependency>
     <groupId>cn.cyejing</groupId>
     <artifactId>fast-ngrok-starter</artifactId>
-    <version>1.0.0-SNAPSHOT</version>
+    <version>1.0.1</version>
 </dependency>
 ```
 ### 默认配置
@@ -30,5 +30,5 @@ ngrok.hostname 默认为空,自定义域名
 
 github: [https://github.com/cyejing/fast-ngrok](https://github.com/cyejing/fast-ngrok)
 
-欢迎提交issues和pr一起改进.😊
+欢迎提交issues和pr一起改进.
 

@@ -1,0 +1,1281 @@
+<!doctype html>
+
+
+
+  
+
+
+<html class="theme-next mist use-motion" lang="zh-Hans">
+<head>
+  <meta charset="UTF-8"/>
+<meta http-equiv="X-UA-Compatible" content="IE=edge" />
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=1"/>
+
+
+
+<meta http-equiv="Cache-Control" content="no-transform" />
+<meta http-equiv="Cache-Control" content="no-siteapp" />
+
+
+
+  <meta name="google-site-verification" content="true" />
+
+
+
+
+  <meta name="yandex-verification" content="true" />
+
+
+
+
+  <meta name="baidu-site-verification" content="true" />
+
+
+
+
+
+
+
+  
+  
+  <link href="/lib/fancybox/source/jquery.fancybox.css?v=2.1.5" rel="stylesheet" type="text/css" />
+
+
+
+
+  
+  
+  
+  
+
+  
+    
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+      
+    
+
+    
+  
+
+  
+    
+    
+    <link href="//fonts.googleapis.com/css?family=Monda:300,300italic,400,400italic,700,700italic|Roboto Slab:300,300italic,400,400italic,700,700italic|Lobster Two:300,300italic,400,400italic,700,700italic|PT Mono:300,300italic,400,400italic,700,700italic&subset=latin,latin-ext" rel="stylesheet" type="text/css">
+  
+
+
+
+
+
+
+<link href="/lib/font-awesome/css/font-awesome.min.css?v=4.6.2" rel="stylesheet" type="text/css" />
+
+<link href="/css/main.css?v=5.1.0" rel="stylesheet" type="text/css" />
+
+
+  <meta name="keywords" content="mysql," />
+
+
+
+
+
+
+
+
+  <link rel="shortcut icon" type="image/x-icon" href="/favicon.ico?v=5.1.0" />
+
+
+
+
+
+
+<meta name="description" content="MySQL总结一. 事务WIKI 事务并发会导致各类问题，SQL 标准预定义了4种事务隔离级别，以满足不同程度的并发。每种隔离级别都能保证解决若干并发问题。 1. 事务的 ACID   feature 解释     Atomic 原子，要么一起完成要么都不做   Consistency 事务开始前和结束后数据都是满足约束规则的，如外键约束   Isolation 隔离性，并发事务之间不会互相影响，">
+<meta name="keywords" content="mysql">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MySQL总结">
+<meta property="og:url" content="http://cyejing.github.io/2018/03/04/MySQL总结/index.html">
+<meta property="og:site_name" content="CYeJing">
+<meta property="og:description" content="MySQL总结一. 事务WIKI 事务并发会导致各类问题，SQL 标准预定义了4种事务隔离级别，以满足不同程度的并发。每种隔离级别都能保证解决若干并发问题。 1. 事务的 ACID   feature 解释     Atomic 原子，要么一起完成要么都不做   Consistency 事务开始前和结束后数据都是满足约束规则的，如外键约束   Isolation 隔离性，并发事务之间不会互相影响，">
+<meta property="og:image" content="http://novoland.github.io/assets/img/a532fd94ccd31a031bd3700865b231c9.png">
+<meta property="og:image" content="http://novoland.github.io/assets/img/81bb92fa7c27d9aef499efc82c4aaa73.png">
+<meta property="og:image" content="http://novoland.github.io/assets/img/9467b1f6665fb48464f4699db1a4bec2.png">
+<meta property="og:image" content="http://novoland.github.io/assets/img/10b0700762cf9c5bfd97396ccfb7c8b3.png">
+<meta property="og:image" content="http://novoland.github.io/assets/img/f83dae9c2efa594efdea1adc45fb31d7.png">
+<meta property="og:updated_time" content="2018-03-04T07:51:01.302Z">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:title" content="MySQL总结">
+<meta name="twitter:description" content="MySQL总结一. 事务WIKI 事务并发会导致各类问题，SQL 标准预定义了4种事务隔离级别，以满足不同程度的并发。每种隔离级别都能保证解决若干并发问题。 1. 事务的 ACID   feature 解释     Atomic 原子，要么一起完成要么都不做   Consistency 事务开始前和结束后数据都是满足约束规则的，如外键约束   Isolation 隔离性，并发事务之间不会互相影响，">
+<meta name="twitter:image" content="http://novoland.github.io/assets/img/a532fd94ccd31a031bd3700865b231c9.png">
+
+
+
+<script type="text/javascript" id="hexo.configurations">
+  var NexT = window.NexT || {};
+  var CONFIG = {
+    root: '/',
+    scheme: 'Mist',
+    sidebar: {"position":"left","display":"post","offset":12,"offset_float":0,"b2t":false,"scrollpercent":false},
+    fancybox: true,
+    motion: true,
+    duoshuo: {
+      userId: '0',
+      author: '博主'
+    },
+    algolia: {
+      applicationID: '',
+      apiKey: '',
+      indexName: '',
+      hits: {"per_page":10},
+      labels: {"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}
+    }
+  };
+</script>
+
+
+
+  <link rel="canonical" href="http://cyejing.github.io/2018/03/04/MySQL总结/"/>
+
+
+
+
+
+  <title> MySQL总结 | CYeJing </title>
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage" lang="zh-Hans">
+
+  
+
+
+
+
+<script>
+  (function(i,s,o,g,r,a,m){i['GoogleAnalyticsObject']=r;i[r]=i[r]||function(){
+            (i[r].q=i[r].q||[]).push(arguments)},i[r].l=1*new Date();a=s.createElement(o),
+          m=s.getElementsByTagName(o)[0];a.async=1;a.src=g;m.parentNode.insertBefore(a,m)
+  })(window,document,'script','https://www.google-analytics.com/analytics.js','ga');
+  ga('create', 'UA-102322008-1', 'auto');
+  ga('send', 'pageview');
+</script>
+
+
+
+
+
+
+
+
+
+
+
+  
+  
+    
+  
+
+  <div class="container sidebar-position-left page-post-detail ">
+    <div class="headband"></div>
+
+    <header id="header" class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-wrapper">
+  <div class="site-meta ">
+    
+
+    <div class="custom-logo-site-title">
+      <a href="/"  class="brand" rel="start">
+        <span class="logo-line-before"><i></i></span>
+        <span class="site-title">CYeJing</span>
+        <span class="logo-line-after"><i></i></span>
+      </a>
+    </div>
+      
+        <h1 class="site-subtitle" itemprop="description">CYeJing</h1>
+      
+  </div>
+
+  <div class="site-nav-toggle">
+    <button>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+      <span class="btn-bar"></span>
+    </button>
+  </div>
+</div>
+
+<nav class="site-nav">
+  
+
+  
+    <ul id="menu" class="menu">
+      
+        
+        <li class="menu-item menu-item-home">
+          <a href="/" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-home"></i> <br />
+            
+            首页
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-archives">
+          <a href="/archives" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-archive"></i> <br />
+            
+            归档
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-tags">
+          <a href="/tags" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-tags"></i> <br />
+            
+            标签
+          </a>
+        </li>
+      
+        
+        <li class="menu-item menu-item-game">
+          <a href="/game" rel="section">
+            
+              <i class="menu-item-icon fa fa-fw fa-gamepad"></i> <br />
+            
+            游戏
+          </a>
+        </li>
+      
+
+      
+    </ul>
+  
+
+  
+</nav>
+
+
+
+ </div>
+    </header>
+
+    <main id="main" class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          <div id="content" class="content">
+            
+
+  <div id="posts" class="posts-expand">
+    
+
+  
+
+  
+  
+  
+
+  <article class="post post-type-normal " itemscope itemtype="http://schema.org/Article">
+    <link itemprop="mainEntityOfPage" href="http://cyejing.github.io/2018/03/04/MySQL总结/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="name" content="CYeJing">
+      <meta itemprop="description" content="">
+      <meta itemprop="image" content="/images/avatar.gif">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="CYeJing">
+    </span>
+
+    
+      <header class="post-header">
+
+        
+        
+          <h2 class="post-title" itemprop="name headline">
+            
+            
+              
+                MySQL总结
+              
+            
+          </h2>
+        
+
+        <div class="post-meta">
+          <span class="post-time">
+            
+              <span class="post-meta-item-icon">
+                <i class="fa fa-calendar-o"></i>
+              </span>
+              
+                <span class="post-meta-item-text">发表于</span>
+              
+              <time title="创建于" itemprop="dateCreated datePublished" datetime="2018-03-04T00:00:00+08:00">
+                2018-03-04
+              </time>
+            
+
+            
+
+            
+          </span>
+
+          
+
+          
+            
+          
+
+          
+          
+             <span id="/2018/03/04/MySQL总结/" class="leancloud_visitors" data-flag-title="MySQL总结">
+               <span class="post-meta-divider">|</span>
+               <span class="post-meta-item-icon">
+                 <i class="fa fa-eye"></i>
+               </span>
+               
+                 <span class="post-meta-item-text">阅读次数 </span>
+               
+                 <span class="leancloud-visitors-count"></span>
+             </span>
+          
+
+          
+
+          
+
+          
+
+        </div>
+      </header>
+    
+
+
+    <div class="post-body" itemprop="articleBody">
+
+      
+      
+
+      
+        <h1 id="MySQL总结"><a href="#MySQL总结" class="headerlink" title="MySQL总结"></a>MySQL总结</h1><h1 id="一-事务"><a href="#一-事务" class="headerlink" title="一. 事务"></a>一. 事务</h1><p><a href="http://en.wikipedia.org/wiki/Isolation_%28database_systems%29" target="_blank" rel="external">WIKI</a></p>
+<p>事务并发会导致各类问题，SQL 标准预定义了4种事务隔离级别，以满足不同程度的并发。每种隔离级别都能保证解决若干并发问题。</p>
+<h2 id="1-事务的-ACID"><a href="#1-事务的-ACID" class="headerlink" title="1. 事务的 ACID"></a>1. 事务的 ACID</h2><table>
+<thead>
+<tr>
+<th>feature</th>
+<th>解释</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>Atomic</td>
+<td>原子，要么一起完成要么都不做</td>
+</tr>
+<tr>
+<td>Consistency</td>
+<td>事务开始前和结束后数据都是满足约束规则的，如外键约束</td>
+</tr>
+<tr>
+<td>Isolation</td>
+<td>隔离性，并发事务之间不会互相影响，就像串行执行一样</td>
+</tr>
+<tr>
+<td>Duaration</td>
+<td>持久性，事务造成的修改是持久的，故障也不会丢失</td>
+</tr>
+</tbody>
+</table>
+<a id="more"></a>
+<h2 id="2-并发事务产生的问题"><a href="#2-并发事务产生的问题" class="headerlink" title="2. 并发事务产生的问题"></a>2. 并发事务产生的问题</h2><ol>
+<li><p>第一类丢失更新 ( <code>回滚丢失</code>)。</p>
+<p>在 A 进行期间，B 做了更新；A 如果回滚，B 的更新丢失。</p>
+<blockquote>
+<p>所有隔离级别都不会发生这种现象</p>
+</blockquote>
+</li>
+<li><p>脏读（<code>Dirty Read</code>）：</p>
+<p>A 看到 B 进行中更新的数据，并以此为根据继续执行相关的操作；B 回滚，导致 A 操作的是脏数据。</p>
+</li>
+<li><p>不可重复读（<code>Non-repeatable Read</code>）：</p>
+<p>A 先查询一次数据，然后 B 更新之并提交，A 再次查询，得到和上一次不同的查询结果。</p>
+</li>
+<li><p>幻读（<code>Phantom Read</code>）：</p>
+<p>A 查询一批数据，B 插入或删除了某些记录并提交，A 再次查询，发现结果集中出现了上次没有的记录，或者上次有的记录消失了。</p>
+</li>
+<li><p>第二类丢失更新 (<code>覆盖丢失</code>)：</p>
+<p>A 和 B 查询同样的记录，进行 “读取、计算、更新”，即各自 ~~<strong>基于最初查询的结果</strong> ~~（非必须） 更新记录并提交，后提交的数据将覆盖先提交的，导致最终数据错误。</p>
+<p>并发进行自增 / 自减是发生覆盖丢失的一个典型场景：</p>
+<p><img src="http://novoland.github.io/assets/img/a532fd94ccd31a031bd3700865b231c9.png" alt="Alt text"></p>
+<p>其中一个事务的更新被另外一个覆盖了，最终导致 i 错误。</p>
+</li>
+</ol>
+<h2 id="3-4个事务隔离级别"><a href="#3-4个事务隔离级别" class="headerlink" title="3. 4个事务隔离级别"></a>3. 4个事务隔离级别</h2><ol>
+<li><p>read uncommited</p>
+<p>最弱，事务的所有动作对其他事务都是立即可见的。存在脏读、不可重复读、第二类丢失更新、幻读问题（全部并发问题都有）。</p>
+</li>
+<li><p>read commited</p>
+<p>只能读到其他事务已提交的数据，中间状态的数据则看不到，解决了<code>脏读</code>问题。</p>
+</li>
+<li><p>repeatable read</p>
+<p><strong>InnoDB的默认隔离级别。</strong></p>
+<p>解决了<code>不可重复读</code>的问题，保证在一个事务内，对同一条记录的重复读都是一致的。</p>
+<p>依然存在幻读、第二类丢失更新问题。</p>
+<blockquote>
+<p>InnoDB 在 Repeatable Read 隔离级别下提供了<code>phantom read</code>的解决方案：</p>
+<p>引入<code>range lock</code>区间锁，读/写时，除了对满足条件的记录加锁，记录之间的区间也加锁，保证不会出现区间内的插入操作。</p>
+</blockquote>
+</li>
+<li><p>serial</p>
+<p>最高，所有事务都是串行的。啥并发问题都没有。</p>
+</li>
+</ol>
+<p>总结：</p>
+<table>
+<thead>
+<tr>
+<th>.</th>
+<th>脏读</th>
+<th>不可重复读</th>
+<th>幻读</th>
+<th>第二类丢失更新</th>
+</tr>
+</thead>
+<tbody>
+<tr>
+<td>read uncommited</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>read commited</td>
+<td><code>X</code></td>
+<td>√</td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>repeatable read</td>
+<td><code>X</code></td>
+<td><code>X</code></td>
+<td>√</td>
+<td>√</td>
+</tr>
+<tr>
+<td>serial</td>
+<td><code>X</code></td>
+<td><code>X</code></td>
+<td><code>X</code></td>
+<td><code>X</code></td>
+</tr>
+</tbody>
+</table>
+<hr>
+<h1 id="二-并发控制"><a href="#二-并发控制" class="headerlink" title="二. 并发控制"></a>二. 并发控制</h1><p>数据库通常通过锁来实现上述隔离级别。MySQL能够根据设置的隔离级别自动管理事务内的锁，不需要开发人员关心，用户写的普通SQL语句就能获得上述并发保障。不过数据库也支持显式加锁，对于当前隔离级别无法解决的并发问题（对InnoDB的默认<code>RR</code>隔离级别而言，并发问题指的是<code>幻读</code>和<code>第二类丢失更新</code>），通常有以下两种解决方式：</p>
+<ol>
+<li><strong>悲观锁</strong>：在数据库事务中显式加锁。这种方法的逻辑是，假定每次访问资源都会出现冲突，每次均以排他形式访问数据库记录，因此称为<strong>悲观锁</strong>。在并发程度低的时候加的锁可能是不必要的，会浪费资源降低性能。</li>
+<li><strong>乐观锁</strong>：在应用程序中使用版本控制手段进行冲突检测。这种方法认为DB的并发度较低，冲突不激烈，假定每次访问数据库都不会发生冲突，不显式加数据库锁，只在更新记录时由应用程序（通常是ORM框架）从DB取最新数据，并与当前提交的数据进行版本比对（通常用额外的一个Version字段，递增记录数据版本），从而判断是否出现了并发问题，因此称为<strong>乐观锁</strong>。<strong>乐观锁只能解决第二类丢失更新（覆盖丢失）问题</strong>，并发度低时，乐观锁能避免数据库级不必要的加锁，降低了开销。</li>
+</ol>
+<p>InnoDB 在锁的基础上还搭配了 MVCC 作为优化，实现以上事务隔离级别。</p>
+<h2 id="1-锁"><a href="#1-锁" class="headerlink" title="1. 锁"></a>1. 锁</h2><p><code>two-phase locking protocol</code>：事务内部只加锁不释放，在提交时一起释放</p>
+<h3 id="锁优化1：拆分，读写锁"><a href="#锁优化1：拆分，读写锁" class="headerlink" title="锁优化1：拆分，读写锁"></a>锁优化1：拆分，读写锁</h3><p>读锁 – 共享锁 – shared<br>写锁 – 排他锁 – exclusive</p>
+<p>工作方式和 JUC 里的读写锁一样。</p>
+<h3 id="锁优化2：降低粒度，表锁-amp-行锁"><a href="#锁优化2：降低粒度，表锁-amp-行锁" class="headerlink" title="锁优化2：降低粒度，表锁 &amp; 行锁"></a>锁优化2：降低粒度，表锁 &amp; 行锁</h3><p><em>表锁由 mysql服务器 实现，行锁由 存储引擎 实现。表锁行锁又细分成读写锁。</em></p>
+<h4 id="表锁"><a href="#表锁" class="headerlink" title="表锁"></a>表锁</h4><p>显式的表锁：<br><code>lock table xxx read/write;</code></p>
+<p>MyISAM几乎完全依赖MySQL服务器提供的表锁机制，查询自动加S表锁，更新自动加X表锁。</p>
+<h4 id="使用MyISAM时注意对表锁的优化："><a href="#使用MyISAM时注意对表锁的优化：" class="headerlink" title="使用MyISAM时注意对表锁的优化："></a>使用MyISAM时注意对表锁的优化：</h4><ol>
+<li><p>缩短锁定时间：拆分query / 索引</p>
+</li>
+<li><p>打开concurrent insert(在尾部并发insert)</p>
+</li>
+</ol>
+<p>   ​</p>
+<ul>
+<li>0 关闭尾部并发insert</li>
+<li>1 如果MyISAM表中没有空洞（即表的中间没有被删除的行），MyISAM允许在一个事务读表的同时，另一个事务从表尾插入记录。这也是MySQL的默认设置。</li>
+<li>2 无论MyISAM表中有没有空洞，都允许在表尾并发插入记录</li>
+</ul>
+<ol>
+<li>根据需要设置读写的优先级。默认写大于读</li>
+</ol>
+<h4 id="行锁"><a href="#行锁" class="headerlink" title="行锁"></a>行锁</h4><p>InnoDB实现了行锁，基于索引的 index-row locking，<strong>如果锁了次级索引中的记录，则对应主索引中的记录也会被锁住</strong>。</p>
+<p>update/delete/insert 动作会自动加x锁。</p>
+<p>查询时也可以设置显式加锁：</p>
+<ol>
+<li><code>select... lock in shared mode</code>: s lock</li>
+<li><code>select... for update</code>: x lock</li>
+</ol>
+<h4 id="查询锁的争用情况"><a href="#查询锁的争用情况" class="headerlink" title="查询锁的争用情况"></a>查询锁的争用情况</h4><ol>
+<li>表锁<br><code>show status like &#39;table%&#39;</code><br><code>Table_locks_immediate</code>:立即获得表锁的次数<br><code>Table_locks_waited</code>:需要等待获得表锁的次数</li>
+<li>innodb的行锁<br><code>show status like &#39;innodb_row_lock&#39;</code><br>current_waits:<br>waits:<br>time:<br>time_avg:<br>time_max:</li>
+</ol>
+<h2 id="2-MVCC"><a href="#2-MVCC" class="headerlink" title="2. MVCC"></a>2. MVCC</h2><p>InnoDB 并不仅仅使用上述的锁机制控制并发，它还搭配了另外一种用于提高并发度的被称为 “Multi-Version Concurrency Control 多版本并发控制” 机制一起使用。简单的说，MVCC为某条记录创建多个snapshot，不同事务读取各自的snapshot，互不影响。MVCC是对锁机制的一种优化，普通的select不加锁， <code>read commited</code> MVCC读， <code>repeatable read</code> MVCC读保证了可重复读、避免幻读。MVCC只对select有效，对加锁的select、update、delete无效。</p>
+<p><strong>MVCC 只工作在RC &amp; RR两个隔离级别下，Read uncommited 隔离级别不支持 MVCC，在这个级别下每次都是读取最新版本的数据行；Serializable 也不支持 MVCC，该级别下每个 read 动作都会为记录加上读锁。</strong></p>
+<h3 id="MySQL的两种read方式"><a href="#MySQL的两种read方式" class="headerlink" title="MySQL的两种read方式"></a>MySQL的两种read方式</h3><p>在MVCC并发控制中，读操作可以分成两类：快照读 (snapshot read)与当前读 (current read)。快照读，读取的是记录的可见版本 (有可能是历史版本)，不用加锁。当前读，读取的是记录的最新版本，并且，当前读返回的记录，都会加上锁，保证其他事务不会再并发修改这条记录。</p>
+<ol>
+<li><code>snapshot read(non-lock) / consistent read</code></li>
+<li><code>current read(lock) / lock read</code></li>
+</ol>
+<h4 id="a-“snapshot-read”"><a href="#a-“snapshot-read”" class="headerlink" title="a. “snapshot read”"></a>a. “snapshot read”</h4><p>普通的select就是snapshot read，读 MVCC 的快照，不加锁, 但是不同的隔离级别中的行为是不一样的:</p>
+<ol>
+<li>RC: 最近的snapshot – 可看到其他事务已提交的内容</li>
+<li>RR: 事务开始时的snapshot – 可重复读、避免幻读</li>
+</ol>
+<p>可以看到，snapshot read 在RC和RR中的工作方式都满足其隔离级别的定义。</p>
+<p><a href="http://dev.mysql.com/doc/refman/5.0/en/innodb-consistent-read.html" target="_blank" rel="external">Consistent Nonlocking read</a></p>
+<blockquote>
+<p>If the transaction isolation level is REPEATABLE READ (the default level), all consistent reads within the same transaction read the snapshot established by the first such read in that transaction.</p>
+<p>You can get a fresher snapshot for your queries by committing the current transaction and after that issuing new queries.</p>
+<p>With READ COMMITTED isolation level, each consistent read within a transaction sets and reads its own fresh snapshot.</p>
+</blockquote>
+<h4 id="b-“current-read-lock-read”"><a href="#b-“current-read-lock-read”" class="headerlink" title="b. “current read / lock read”"></a>b. “current read / lock read”</h4><p>lock read 操作的是数据的最新版本，且对记录加锁。以下动作属于 lock read：</p>
+<ol>
+<li><code>select... lock in shared mode</code>: s lock</li>
+<li><code>select... for update</code>: x lock</li>
+<li>DML（insert/delete/update）也属于 <code>lock read</code></li>
+</ol>
+<p><a href="http://dev.mysql.com/doc/refman/5.0/en/innodb-locking-reads.html" target="_blank" rel="external">SELECT … FOR UPDATE and SELECT … LOCK IN SHARE MODE Locking Reads</a></p>
+<p>在 <strong>在RR隔离级别上</strong> ，lock read 除了会加记录锁，还会为记录之间的间隙加上<code>gap lock</code>，从而解决<code>phantom read</code>问题。</p>
+<h2 id="3-gap-lock-amp-phantom-read"><a href="#3-gap-lock-amp-phantom-read" class="headerlink" title="3. gap lock &amp; phantom read"></a>3. gap lock &amp; phantom read</h2><p>在<code>repeatable read</code>级别上, <code>lock read</code> 时使用了 <code>gap-key lock</code> 解决 <code>phathom read</code> 问题: 不仅锁找到的记录，还锁区间，保证区间内的值无法被插入。<code>read committed</code>只有记录锁，存在幻读。</p>
+<p>注意，无法使用索引时会走主索引实现全表扫描，此时会给所有的记录加上record lock，并对其所有的区间加gap lock，表完全锁死，此时只能进行 snapshot read，极大地降低并发，这就是为何update/delete尽量要走索引的原因。</p>
+<p><a href="http://hedengcheng.com/?p=771" target="_blank" rel="external">何登成的《MySQL 加锁处理分析》</a><br><a href="http://dev.mysql.com/doc/refman/5.0/en/innodb-record-level-locks.html" target="_blank" rel="external">innodb-record-level-locks`</a></p>
+<blockquote>
+<p>MySQL/InnoDB定义的4种隔离级别：</p>
+<p>Read Uncommited<br>可以读取未提交记录。此隔离级别，不会使用，忽略。</p>
+<p>Read Committed (RC)<br>快照读忽略，本文不考虑。</p>
+<p>针对当前读，RC隔离级别保证对读取到的记录加锁 (记录锁)，存在幻读现象。</p>
+<p>Repeatable Read (RR)<br>快照读忽略，本文不考虑。</p>
+<p>针对当前读，RR隔离级别保证对读取到的记录加锁 (记录锁)，同时保证对读取的范围加锁，新的满足查询条件的记录不能够插入 (间隙锁)，不存在幻读现象。</p>
+<p>Serializable<br>从MVCC并发控制退化为基于锁的并发控制。不区别快照读与当前读，所有的读操作均为当前读，读加读锁 (S锁)，写加写锁 (X锁)。</p>
+<p>Serializable隔离级别下，读写冲突，因此并发度急剧下降，在MySQL/InnoDB下不建议使用。</p>
+</blockquote>
+<hr>
+<h1 id="三-优化query-粗略"><a href="#三-优化query-粗略" class="headerlink" title="三. 优化query (粗略)"></a>三. 优化query (粗略)</h1><h2 id="定位瓶颈"><a href="#定位瓶颈" class="headerlink" title="定位瓶颈"></a>定位瓶颈</h2><p>IO or CPU?</p>
+<h2 id="工具"><a href="#工具" class="headerlink" title="工具"></a>工具</h2><ol>
+<li>explain &amp; profile</li>
+</ol>
+<h2 id="基本原则"><a href="#基本原则" class="headerlink" title="基本原则"></a>基本原则</h2><ol>
+<li>join时小结果集驱动大结果集</li>
+<li>利用索引完成排序/分组</li>
+<li>只取需要的列（？）<br>a. network<br>b. 不能使用Covering index<br>c. 优化排序</li>
+<li>仅仅使用最有效的过滤条件<br>建立索引的字段越小越好，减少IO</li>
+<li>避免复杂join和子查询<br>对于MyISAM，join会锁住所有相关的表（s lock），可能阻塞DML其他很长时间，此时可以在程序中做join，降低对锁的占用，减少阻塞；<br>对应用而言，SQL的执行时间：网络/执行（CPU+IO）/锁阻塞，优化瓶颈<br>子查询实现不好，不一定会走索引</li>
+</ol>
+<h2 id="Explain"><a href="#Explain" class="headerlink" title="Explain"></a>Explain</h2><hr>
+<h1 id="四-索引"><a href="#四-索引" class="headerlink" title="四. 索引"></a>四. 索引</h1><p><a href="http://www.percona.com/files/presentations/percona-live/london-2011/PLUK2011-practical-mysql-indexing-guidelines.pdf" target="_blank" rel="external">Practical MySQL indexing guidelines</a></p>
+<p>MyISAM 和 InnoDB 的索引，采用的数据结构都是B+树。</p>
+<h2 id="1-B树和B-树"><a href="#1-B树和B-树" class="headerlink" title="1. B树和B+树"></a>1. B树和B+树</h2><h3 id="B树"><a href="#B树" class="headerlink" title="B树"></a>B树</h3><p>B树的结构类似二叉查找树，只不过节点的度远远大于2，查找的复杂度为树的高度，O(logdN)：<br><img src="http://novoland.github.io/assets/img/81bb92fa7c27d9aef499efc82c4aaa73.png" alt="Alt text"></p>
+<p>通常会将根据硬盘上一个page的大小来调整节点的度，原因是：</p>
+<ol>
+<li>基于外存的查找数据结构中，性能的瓶颈在于IO，这样的处理一可以让一个节点只需要一次IO</li>
+<li>二可以显著降低树的高度，查找时只需几次page的IO即可定位到目标。</li>
+</ol>
+<h3 id="B-树"><a href="#B-树" class="headerlink" title="B+树"></a>B+树</h3><p>B+树是对B树的优化：</p>
+<ol>
+<li>只有叶子节点存data，内节点只存key；<br>好处：<strong> 提高内节点的度，降低高度 \</strong></li>
+<li>叶子节点加上了next指针，形成一个链表<br>好处：<strong> 快速范围查找，只需确定起点和终点，顺序扫描即可 \</strong></li>
+</ol>
+<p><img src="http://novoland.github.io/assets/img/9467b1f6665fb48464f4699db1a4bec2.png" alt="Alt text"></p>
+<h2 id="2-MyISAM的索引"><a href="#2-MyISAM的索引" class="headerlink" title="2. MyISAM的索引"></a>2. MyISAM的索引</h2><p>索引和数据分离，数据文件：堆表(按插入有序)</p>
+<p>主键索引和非主键索引结构一致，叶子节点存储的是行的物理位置信息（row number）</p>
+<p><img src="http://novoland.github.io/assets/img/10b0700762cf9c5bfd97396ccfb7c8b3.png" alt="Alt text"></p>
+<h2 id="3-InnoDB的索引"><a href="#3-InnoDB的索引" class="headerlink" title="3. InnoDB的索引"></a>3. InnoDB的索引</h2><h3 id="primary-index（主键索引）"><a href="#primary-index（主键索引）" class="headerlink" title="primary index（主键索引）"></a>primary index（主键索引）</h3><p>数据文件就是主键索引文件，叶子节点存真实数据，这种方式称为 <strong>聚集索引</strong>。</p>
+<p>如果没有主键，InnoDB会试着使用一个Unique Nonnullable index代替；如果没有这种索引，会定义隐藏的主键。</p>
+<p><img src="http://novoland.github.io/assets/img/f83dae9c2efa594efdea1adc45fb31d7.png" alt="Alt text"></p>
+<h3 id="secondary-index"><a href="#secondary-index" class="headerlink" title="secondary index"></a>secondary index</h3><p>非主键上的索引称为次级索引，叶子节点存 <strong>主键</strong>，此时需要查找两次。</p>
+<h3 id="优缺点"><a href="#优缺点" class="headerlink" title="优缺点"></a>优缺点</h3><p>优点： 将相关数据保存在一起，减少IO；MyISAM访问每个行都得访问数据文件</p>
+<p>缺点：</p>
+<ol>
+<li>B+树的节点按page聚集，存储着数据，因此主索引叶子节点分裂的机会远远大于非聚集索引；split会导致</li>
+</ol>
+<p>   ​</p>
+<ul>
+<li>移动大量数据;</li>
+<li>需要更多空间（碎片）;</li>
+<li>split时会给整个索引加x锁，不可访问</li>
+</ul>
+<ol>
+<li><p>按主键顺序插入最快，因为记录被顺序插到索引的最末，节点 split 的开销很小；乱序插入慢，因为新记录很大机会被插入到已满的叶子节点，引起频繁分裂，因此 InnoDB <strong>更适合用自增主键</strong>；</p>
+</li>
+<li><p>secondary index包含了主键，体积可能很大，因此 <strong>不适合用过长字段当主键</strong>；</p>
+</li>
+<li><p>在secondary index上可能需要查找两次，一次查自己，一次查主索引。</p>
+</li>
+</ol>
+<h2 id="4-什么样的查询条件会走索引"><a href="#4-什么样的查询条件会走索引" class="headerlink" title="4. 什么样的查询条件会走索引?"></a>4. 什么样的查询条件会走索引?</h2><blockquote>
+<p>区分<code>范围查询</code>和<code>等值查询</code></p>
+<p><code>in</code>是多个等值查询，<code>between</code>二者都有可能。</p>
+<p><strong>范围查询</strong> 使用索引的方式，是先确定起点，再根据叶子节点组成的链表顺序扫描，直到终点。</p>
+<p><strong>等值查询</strong> 则是从上到下搜索树。</p>
+</blockquote>
+<p>假如有索引<code>&lt;a,b,c,d&gt;</code>：</p>
+<h3 id="a-最左前缀的等值查询"><a href="#a-最左前缀的等值查询" class="headerlink" title="a) 最左前缀的等值查询"></a>a) 最左前缀的等值查询</h3><p>一旦出现空洞，后面的列就不能使用索引了，但空洞可以用<code>in所有值</code>填充</p>
+<h3 id="b-范围查询"><a href="#b-范围查询" class="headerlink" title="b) 范围查询"></a>b) 范围查询</h3><p>只有第一个出现的范围查询及其前面的列（前提是要构成最左前缀）可以使用索引，后面的即使构成最左前缀也不会走索引。</p>
+<p>因此，较常进行范围查询的列要放在索引的后面。</p>
+<h3 id="c-字符串-如果放在开头则无法走索引"><a href="#c-字符串-如果放在开头则无法走索引" class="headerlink" title="c) 字符串%如果放在开头则无法走索引"></a>c) 字符串<code>%</code>如果放在开头则无法走索引</h3><h2 id="5-建立索引时的优化"><a href="#5-建立索引时的优化" class="headerlink" title="5. 建立索引时的优化"></a>5. 建立索引时的优化</h2><h3 id="a-不适合创建索引的情况"><a href="#a-不适合创建索引的情况" class="headerlink" title="a) 不适合创建索引的情况"></a>a) 不适合创建索引的情况</h3><ol>
+<li><strong>唯一性太差的列</strong><br>引擎根据统计信息会做优化，可能建了也不走</li>
+<li><strong>频繁更新的列</strong><br>需要同时维护索引和数据</li>
+</ol>
+<h3 id="b-前缀索引-和-selectivity（选择性）"><a href="#b-前缀索引-和-selectivity（选择性）" class="headerlink" title="b) 前缀索引 和 selectivity（选择性）"></a>b) 前缀索引 和 selectivity（选择性）</h3><p>问题：列太长，太消耗空间；解决方案：用前缀建立索引<br>但是又要保证良好的selectivity<br>selectivity = (distinct values) / all records</p>
+<h3 id="c-尽量使用多列复合索引而不是多个单列索引"><a href="#c-尽量使用多列复合索引而不是多个单列索引" class="headerlink" title="c) 尽量使用多列复合索引而不是多个单列索引"></a>c) 尽量使用多列复合索引而不是多个单列索引</h3><p>减少维护索引的开销<br>多个单列索引老版本只会选一个，5.0以后可以用index merge，扫描多个再合并结果（or/and）</p>
+<h3 id="d-选择正确的列顺序"><a href="#d-选择正确的列顺序" class="headerlink" title="d) 选择正确的列顺序"></a>d) 选择正确的列顺序</h3><ol>
+<li>一般来说选择性高的放前面，在最初阶段就可以排除大部分记录，减少后续需要考察的数据量；</li>
+<li>最常用的放在前面，范围查询的字段尽量靠后。</li>
+</ol>
+<h2 id="6-查询优化"><a href="#6-查询优化" class="headerlink" title="6. 查询优化"></a>6. 查询优化</h2><h3 id="a-查询条件中不要对列做运算，否则无法使用索引；"><a href="#a-查询条件中不要对列做运算，否则无法使用索引；" class="headerlink" title="a) 查询条件中不要对列做运算，否则无法使用索引；"></a>a) 查询条件中不要对列做运算，否则无法使用索引；</h3><h3 id="b-使用“覆盖索引”技巧"><a href="#b-使用“覆盖索引”技巧" class="headerlink" title="b) 使用“覆盖索引”技巧"></a>b) 使用“覆盖索引”技巧</h3><p>Covering index: 覆盖了查询的所有列，避免访问数据文件/聚集索引<br>发起的查询被索引覆盖时，会在Extra出现Using Index</p>
+<h3 id="c-优化join"><a href="#c-优化join" class="headerlink" title="c) 优化join"></a>c) 优化join</h3><p>MySQL只支持nested loop join，没有hash join或者sort merge join。</p>
+<blockquote>
+<p>数据库 join 类型：</p>
+<ol>
+<li><code>nested-loop join</code><br>两层循环，分驱动表（外层，小）和被驱动表（内层）。MySQL 只有这种 join 方式。</li>
+<li><code>sort-merge join</code><br>两边都先 sort（有索引就不用了），用两个指针指向两边的第一个元素，依次找相同值。<br>和 nested-loop join 类似，但利用了排序的性质，内层循环从上次停止的地方开始就可以，不要从头开始找起。</li>
+<li><code>hash join</code><br>一边构造一个哈希表（或布隆过滤器），另一边依次判断记录是否在其中</li>
+</ol>
+</blockquote>
+<p>当join无法使用索引（type是all/index/range/index_merge，用到是ref）时会用到join buffer，缓存中间的结果集</p>
+<p>优化：</p>
+<ol>
+<li>某些情况下拆分join效率更高：</li>
+</ol>
+<p>   ​</p>
+<ul>
+<li>在应用端可以利用缓存</li>
+<li>减少MyISAM的表锁时间</li>
+<li>对大表用in替换join，更高效</li>
+</ul>
+<ol>
+<li><p>减小最外层循环次数，即用小结果集驱动join（优化器会帮你挑选较小的表做驱动表）</p>
+</li>
+<li><p>保证被驱动表上的join字段被索引</p>
+</li>
+<li><p>只 group by 或 order by 驱动表上的列，这样可以在 join 前排序</p>
+</li>
+<li><p>被驱动表无法走索引时，保证join buffer足够大</p>
+</li>
+</ol>
+<h3 id="d-优化-order-by"><a href="#d-优化-order-by" class="headerlink" title="d) 优化 order by"></a>d) 优化 order by</h3><p>当不能用索引实现排序时，mysql必须对存储引擎返回的记录排序，这个过程被称为filesort（但不一定发生在磁盘上）。纯内存时快速排序，外存时分块快速排序再归并。</p>
+<p>两种filesort算法：</p>
+<ol>
+<li>order by 字段和行指针取出，在sort buffer中排序；然后通过行指针取出需要的列。需要访问两次数据，但内存消耗少。</li>
+<li>一次性将所有需要的列取出，在sort buffer中排序，需要更多内存。</li>
+</ol>
+<p>参数：max_length_for_sort_data，结果集长度超过该参数时用第一种。</p>
+<p>对join的排序:</p>
+<ol>
+<li>如果只用了驱动表的字段排序：先排序，再join</li>
+<li>否则先join，结果集放temp table，然后再排序（Using temporary; Using filesort）</li>
+</ol>
+<p>优化：</p>
+<ol>
+<li>尽量走索引</li>
+</ol>
+<p>   ​</p>
+<ul>
+<li>order by时必须要能使用索引的最左前缀(order by+where条件中的常量组成最左前缀也可以)，且order by的方向都相同</li>
+<li>join时，order by的列如果引用第一个表（驱动表），可以在 join 前先排好序</li>
+</ul>
+<ol>
+<li>优化filesort</li>
+</ol>
+<p>   ​</p>
+<ul>
+<li>内存多时加大max_length_for_sort_data，返回记录小于时用新算法，大于用老算法；</li>
+<li>用第二种算法时，去掉不必要的返回字段（会用更多内存）</li>
+<li>加大sort_buffer_size，减小排序过程的IO</li>
+</ul>
+<h3 id="e-优化-group-by-distinct"><a href="#e-优化-group-by-distinct" class="headerlink" title="e) 优化 group by / distinct"></a>e) 优化 group by / distinct</h3><h4 id="group-by："><a href="#group-by：" class="headerlink" title="group by："></a>group by：</h4><p>比order by多了分组和聚合函数计算的步骤，因此优化方式和order by基本类似。</p>
+<p><strong>1. 走索引，可以避免额外排序</strong></p>
+<blockquote>
+<h4 id="索引访问方式"><a href="#索引访问方式" class="headerlink" title="索引访问方式"></a>索引访问方式</h4><h5 id="1-loose-index-scan（MySQL不支持）"><a href="#1-loose-index-scan（MySQL不支持）" class="headerlink" title="1. loose index scan（MySQL不支持）"></a>1. <code>loose index scan</code>（MySQL不支持）</h5><p>当前对 <strong>范围查询</strong> 的处理方式(range scan)是<code>走叶子节点链表扫描</code>，当后续有其他列上的过滤条件时，不支持在 <strong>从上往下搜索的时候，对一个范围内的所有子树，利用后续列的其他条件进行查找并合并结果集</strong> 的工作方式。</p>
+<p>举个例子，idx(a,b,c)，where a = 1 and b &lt; 3 and c = 1，不用loose index scan时的range scan方式：</p>
+<p>首先定位到 a=1 的节点，然后在这个子树中搜索 b=3 的最右侧叶子节点，接着往前扫描，并用 c=1 在链表上过滤，这种方式在搜索的时候实际上只用到了ab两列;</p>
+<p>但是显然有一种更好的方式，即在树上从上往下搜索到b&lt;3的所有区间后，对每个子树用c=1的条件去扫描，并合并结果。这就是所谓的loose index scan。</p>
+<p>这就是 idx(a,b,c)少了只有a/c当查询条件是只能用到a列；ab都有范围查询只能用到a列 的根本原因。</p>
+<p>Mysql的B+索引只支持等值查询，<strong>in实际上是和其他条件进行笛卡尔积后的多个等值查询</strong>，因此在查询b/c列时，如果用a in (‘男’,’女’)补上这个空洞时，又是可以走索引的。</p>
+<p><strong>可以使用下面两种方式加速分组</strong>：</p>
+<h5 id="2-伪loose-index-scan"><a href="#2-伪loose-index-scan" class="headerlink" title="2. 伪loose index scan:"></a>2. <code>伪loose index scan</code>:</h5><p>group by在有些情况下可以使用这种方式加速查询。</p>
+<p>idx(a,b,c)，<code>select max(c) where ... group by a,b</code>时对每个 a 及 b 的组合，从该节点出发找到该子树的最左（右）节点，就能知道这个 group 中 c 的最大值了；最后合并结果即可。</p>
+<p>这种工作方式和真正的 loose scan 类似，都是合并子树的搜索结果，而且仅需扫描子树的部分节点。它的局限在于仅适用某些聚合函数如min/max，且查询字段必须在 group by 字段后面，二者一起组成最左前缀。</p>
+<h5 id="3-Tight-index-scan"><a href="#3-Tight-index-scan" class="headerlink" title="3. Tight index scan:"></a>3. <code>Tight index scan</code>:</h5><p>其实就是利用索引的有序性，工作方式和<code>伪loose index scan</code>类似，但需要扫描满足条件的组合所对应子树中的所有节点，再进行分组/聚合，而不能直接拿到结果。</p>
+<p><a href="http://docs.oracle.com/cd/E16655_01/server.121/e15858/tgsql_optop.htm#TGSQL95163" target="_blank" rel="external">B+树索引访问方式</a></p>
+</blockquote>
+<p><strong>2. 不能用索引时，mysql必须先将数据放入临时表，然后filesort。</strong></p>
+<h4 id="distinct："><a href="#distinct：" class="headerlink" title="distinct："></a>distinct：</h4><p>与group by的实现方式是一样的，因此优化方式也类似：</p>
+<ol>
+<li><code>伪loose index scan</code></li>
+<li><code>tight index scan</code></li>
+<li><code>filesort</code>，但distinct不需要排序</li>
+</ol>
+<h3 id="f-count"><a href="#f-count" class="headerlink" title="f) count"></a>f) count</h3><p>注意区分以下两种 count ：</p>
+<ol>
+<li><code>count(*)</code><br>统计结果集的行</li>
+<li><code>count(列/表达式)</code><br>统计值的个数，排除null</li>
+</ol>
+<p>MyISAM维护了表的总行数，所以没有where条件的 count(*) 很快。</p>
+<p>工作方式：扫描符合条件的记录，统计。</p>
+<p>一个sql语句统计不同值的count：</p>
+<figure class="highlight plain"><table><tr><td class="gutter"><pre><div class="line">1</div></pre></td><td class="code"><pre><div class="line">SELECT COUNT(color = &apos;blue&apos; OR NULL) AS blue, COUNT(color = &apos;red&apos; OR NULL) AS red FROM items</div></pre></td></tr></table></figure>
+<p><strong>优化</strong></p>
+<p>用 “covering index” 技巧让 count 利用索引就能完成，不要访问数据文件。</p>
+<h3 id="g-limit-amp-offset"><a href="#g-limit-amp-offset" class="headerlink" title="g) limit &amp; offset"></a>g) limit &amp; offset</h3><p>一般瓶颈在于扫描的数据太多，limit 10000,20会扫描10020行数据，再丢弃前10000行.</p>
+<p>优化：利用covering index在索引上偏移，而不是全表上偏移 – 可以先在索引上偏移再join原表获取其他列。</p>
+<p>(没别的办法了？？)</p>
+<h3 id="h-union"><a href="#h-union" class="headerlink" title="h) union"></a>h) union</h3><p>MySQL总是用temp table实现union</p>
+<p>使用<code>union all</code>而不是<code>union</code>，后者会对temp table做distinct操作，开销很大</p>
+<p><strong> 附：数据访问方式，出现在explain的type列里 \</strong></p>
+<ol>
+<li>(all) Full table scan 全表扫描</li>
+<li>(index) Index scan 索引全部扫描：找到最左叶子节点，然后走链表</li>
+<li>(range) Range Scan 索引范围扫描：找到范围的最左（右）侧叶子，然后走链表<br>例外：in显示的是range，但是是索引唯一扫描，等同于多个相等条件</li>
+<li>(ref/eq_ref) Unique Index Lookup 索引唯一扫描，走树</li>
+<li>(const) Constant</li>
+</ol>
+<hr>
+<h1 id="五-可扩展设计"><a href="#五-可扩展设计" class="headerlink" title="五. 可扩展设计"></a>五. 可扩展设计</h1><h2 id="分布式事务"><a href="#分布式事务" class="headerlink" title="分布式事务"></a>分布式事务</h2><ol>
+<li>合理设计切分规则，保证事务所需数据在同一个DB上，避免分布式事务</li>
+<li>拆分成小事务，app保证整体事务完整性</li>
+</ol>
+<h2 id="最终一致性"><a href="#最终一致性" class="headerlink" title="最终一致性"></a>最终一致性</h2><p>为了HA/负载均衡需要冗余数据，数据冗余的地方就存在一致性的问题</p>
+<p>同一个数据只要保存在多个地方，且至少有一个地方被写，就存在一致性问题<br>如果保存在多个地方被写，情况就更复杂了，涉及到数据的传播/并发/事务，尽量避免这个情况，保证数据在一个地方被增删改。</p>
+<blockquote>
+<p>shard还是一个数据在一个地方</p>
+</blockquote>
+<p>如果session是各个容器自己管理的，因为要是强一致性的，必然需要session的复制<br>如果每个容器有自己的本地cache，且会update/remove，和cpu的L1/L2/L3缓存的情形类似，都要实现cache的传播</p>
+<h2 id="Replication"><a href="#Replication" class="headerlink" title="Replication"></a>Replication</h2><ol>
+<li>Master-Slaves 读写分离，负载均衡</li>
+<li>Dual Master 双机热备HA</li>
+</ol>
+<h2 id="数据切分-shard"><a href="#数据切分-shard" class="headerlink" title="数据切分(shard)"></a>数据切分(shard)</h2><h3 id="垂直"><a href="#垂直" class="headerlink" title="垂直"></a>垂直</h3><p>按业务模块切分<br>需要程序进行不同库之间的join</p>
+<h3 id="水平"><a href="#水平" class="headerlink" title="水平"></a>水平</h3><p>每个库的表结构是一样的，按id划分数据<br>数据局部性好，很多表关联/事务能够在一个DB完成</p>
+<h3 id="结合：先垂直再水平"><a href="#结合：先垂直再水平" class="headerlink" title="结合：先垂直再水平"></a>结合：先垂直再水平</h3><h3 id="切分后的整合"><a href="#切分后的整合" class="headerlink" title="切分后的整合"></a>切分后的整合</h3><p>统一数据访问层 – 路由规则/解析sql/合并结果/join/分布式事务/负载均衡都可以在这一层搞定<br>一些开源产品：</p>
+<blockquote>
+<ol>
+<li>MySQL Proxy</li>
+</ol>
+</blockquote>
+<ol>
+<li>Amoeba (JDBC以下)</li>
+</ol>
+<p>   ​</p>
+<p>   query路由/过滤，负载均衡，读写分离，HA</p>
+<p>​    </p>
+<p>   ​</p>
+<p>   主要解决：</p>
+<p>​    </p>
+<p>   ​</p>
+<pre><code>1. 数据切分后复杂数据源整合;
+2. 提供数据切分规则并降低数据切分规则给数据库带来的影响;
+3. 降低数据库与客户端的连接数;
+4. 读写分离路由
+</code></pre><blockquote>
+<p>Amoeba for MySQL/Aladin</p>
+<ol>
+<li>hibernate shards / ibatis shards</li>
+</ol>
+</blockquote>
+<p>问题：</p>
+<ol>
+<li>分布式事务</li>
+<li>跨节点join</li>
+<li>跨节点合并排序分页<br>都由应用解决吧</li>
+</ol>
+<h1 id="参考书籍："><a href="#参考书籍：" class="headerlink" title="参考书籍："></a>参考书籍：</h1><ol>
+<li>《高性能MySQL》</li>
+<li>张宴的《MySQL调优与架构设计》</li>
+</ol>
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <div>
+      
+        
+
+      
+    </div>
+
+    <footer class="post-footer">
+      
+        <div class="post-tags">
+          
+            <a href="/tags/mysql/" rel="tag"># mysql</a>
+          
+        </div>
+      
+
+      
+        
+      
+
+      
+        <div class="post-nav">
+          <div class="post-nav-next post-nav-item">
+            
+              <a href="/2017/10/06/Fast-Ngrok内网映射神器,集成spring-boot快速启动/" rel="next" title="Fast-Ngrok内网映射神器,集成spring-boot快速启动">
+                <i class="fa fa-chevron-left"></i> Fast-Ngrok内网映射神器,集成spring-boot快速启动
+              </a>
+            
+          </div>
+
+          <span class="post-nav-divider"></span>
+
+          <div class="post-nav-prev post-nav-item">
+            
+              <a href="/2018/03/04/Java 并发基本知识/" rel="prev" title="Java 并发基本知识">
+                Java 并发基本知识 <i class="fa fa-chevron-right"></i>
+              </a>
+            
+          </div>
+        </div>
+      
+
+      
+      
+    </footer>
+  </article>
+
+
+
+    <div class="post-spread">
+      
+    </div>
+  </div>
+
+
+          </div>
+          
+
+
+          
+  <div class="comments" id="comments">
+    
+  </div>
+
+
+        </div>
+        
+          
+  
+  <div class="sidebar-toggle">
+    <div class="sidebar-toggle-line-wrap">
+      <span class="sidebar-toggle-line sidebar-toggle-line-first"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-middle"></span>
+      <span class="sidebar-toggle-line sidebar-toggle-line-last"></span>
+    </div>
+  </div>
+
+  <aside id="sidebar" class="sidebar">
+    <div class="sidebar-inner">
+
+      
+
+      
+        <ul class="sidebar-nav motion-element">
+          <li class="sidebar-nav-toc sidebar-nav-active" data-target="post-toc-wrap" >
+            文章目录
+          </li>
+          <li class="sidebar-nav-overview" data-target="site-overview">
+            站点概览
+          </li>
+        </ul>
+      
+
+      <section class="site-overview sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+          <img class="site-author-image" itemprop="image"
+               src="/images/avatar.gif"
+               alt="CYeJing" />
+          <p class="site-author-name" itemprop="name">CYeJing</p>
+           
+              <p class="site-description motion-element" itemprop="description"></p>
+           
+        </div>
+        <nav class="site-state motion-element">
+
+          
+            <div class="site-state-item site-state-posts">
+              <a href="/archives">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">日志</span>
+              </a>
+            </div>
+          
+
+          
+
+          
+            
+            
+            <div class="site-state-item site-state-tags">
+              <a href="/tags/index.html">
+                <span class="site-state-item-count">12</span>
+                <span class="site-state-item-name">标签</span>
+              </a>
+            </div>
+          
+
+        </nav>
+
+        
+
+        <div class="links-of-author motion-element">
+          
+        </div>
+
+        
+        
+
+        
+        
+
+        
+
+
+      </section>
+
+      
+      <!--noindex-->
+        <section class="post-toc-wrap motion-element sidebar-panel sidebar-panel-active">
+          <div class="post-toc">
+
+            
+              
+            
+
+            
+              <div class="post-toc-content"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#MySQL总结"><span class="nav-number">1.</span> <span class="nav-text">MySQL总结</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#一-事务"><span class="nav-number">2.</span> <span class="nav-text">一. 事务</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-事务的-ACID"><span class="nav-number">2.1.</span> <span class="nav-text">1. 事务的 ACID</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-并发事务产生的问题"><span class="nav-number">2.2.</span> <span class="nav-text">2. 并发事务产生的问题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-4个事务隔离级别"><span class="nav-number">2.3.</span> <span class="nav-text">3. 4个事务隔离级别</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#二-并发控制"><span class="nav-number">3.</span> <span class="nav-text">二. 并发控制</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-锁"><span class="nav-number">3.1.</span> <span class="nav-text">1. 锁</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#锁优化1：拆分，读写锁"><span class="nav-number">3.1.1.</span> <span class="nav-text">锁优化1：拆分，读写锁</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#锁优化2：降低粒度，表锁-amp-行锁"><span class="nav-number">3.1.2.</span> <span class="nav-text">锁优化2：降低粒度，表锁 & 行锁</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#表锁"><span class="nav-number">3.1.2.1.</span> <span class="nav-text">表锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#使用MyISAM时注意对表锁的优化："><span class="nav-number">3.1.2.2.</span> <span class="nav-text">使用MyISAM时注意对表锁的优化：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#行锁"><span class="nav-number">3.1.2.3.</span> <span class="nav-text">行锁</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#查询锁的争用情况"><span class="nav-number">3.1.2.4.</span> <span class="nav-text">查询锁的争用情况</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-MVCC"><span class="nav-number">3.2.</span> <span class="nav-text">2. MVCC</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#MySQL的两种read方式"><span class="nav-number">3.2.1.</span> <span class="nav-text">MySQL的两种read方式</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#a-“snapshot-read”"><span class="nav-number">3.2.1.1.</span> <span class="nav-text">a. “snapshot read”</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#b-“current-read-lock-read”"><span class="nav-number">3.2.1.2.</span> <span class="nav-text">b. “current read / lock read”</span></a></li></ol></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-gap-lock-amp-phantom-read"><span class="nav-number">3.3.</span> <span class="nav-text">3. gap lock & phantom read</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#三-优化query-粗略"><span class="nav-number">4.</span> <span class="nav-text">三. 优化query (粗略)</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#定位瓶颈"><span class="nav-number">4.1.</span> <span class="nav-text">定位瓶颈</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#工具"><span class="nav-number">4.2.</span> <span class="nav-text">工具</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#基本原则"><span class="nav-number">4.3.</span> <span class="nav-text">基本原则</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Explain"><span class="nav-number">4.4.</span> <span class="nav-text">Explain</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#四-索引"><span class="nav-number">5.</span> <span class="nav-text">四. 索引</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#1-B树和B-树"><span class="nav-number">5.1.</span> <span class="nav-text">1. B树和B+树</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#B树"><span class="nav-number">5.1.1.</span> <span class="nav-text">B树</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#B-树"><span class="nav-number">5.1.2.</span> <span class="nav-text">B+树</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#2-MyISAM的索引"><span class="nav-number">5.2.</span> <span class="nav-text">2. MyISAM的索引</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#3-InnoDB的索引"><span class="nav-number">5.3.</span> <span class="nav-text">3. InnoDB的索引</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#primary-index（主键索引）"><span class="nav-number">5.3.1.</span> <span class="nav-text">primary index（主键索引）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#secondary-index"><span class="nav-number">5.3.2.</span> <span class="nav-text">secondary index</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#优缺点"><span class="nav-number">5.3.3.</span> <span class="nav-text">优缺点</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#4-什么样的查询条件会走索引"><span class="nav-number">5.4.</span> <span class="nav-text">4. 什么样的查询条件会走索引?</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a-最左前缀的等值查询"><span class="nav-number">5.4.1.</span> <span class="nav-text">a) 最左前缀的等值查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b-范围查询"><span class="nav-number">5.4.2.</span> <span class="nav-text">b) 范围查询</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#c-字符串-如果放在开头则无法走索引"><span class="nav-number">5.4.3.</span> <span class="nav-text">c) 字符串%如果放在开头则无法走索引</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#5-建立索引时的优化"><span class="nav-number">5.5.</span> <span class="nav-text">5. 建立索引时的优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a-不适合创建索引的情况"><span class="nav-number">5.5.1.</span> <span class="nav-text">a) 不适合创建索引的情况</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b-前缀索引-和-selectivity（选择性）"><span class="nav-number">5.5.2.</span> <span class="nav-text">b) 前缀索引 和 selectivity（选择性）</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#c-尽量使用多列复合索引而不是多个单列索引"><span class="nav-number">5.5.3.</span> <span class="nav-text">c) 尽量使用多列复合索引而不是多个单列索引</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#d-选择正确的列顺序"><span class="nav-number">5.5.4.</span> <span class="nav-text">d) 选择正确的列顺序</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#6-查询优化"><span class="nav-number">5.6.</span> <span class="nav-text">6. 查询优化</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#a-查询条件中不要对列做运算，否则无法使用索引；"><span class="nav-number">5.6.1.</span> <span class="nav-text">a) 查询条件中不要对列做运算，否则无法使用索引；</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#b-使用“覆盖索引”技巧"><span class="nav-number">5.6.2.</span> <span class="nav-text">b) 使用“覆盖索引”技巧</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#c-优化join"><span class="nav-number">5.6.3.</span> <span class="nav-text">c) 优化join</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#d-优化-order-by"><span class="nav-number">5.6.4.</span> <span class="nav-text">d) 优化 order by</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#e-优化-group-by-distinct"><span class="nav-number">5.6.5.</span> <span class="nav-text">e) 优化 group by / distinct</span></a><ol class="nav-child"><li class="nav-item nav-level-4"><a class="nav-link" href="#group-by："><span class="nav-number">5.6.5.1.</span> <span class="nav-text">group by：</span></a></li><li class="nav-item nav-level-4"><a class="nav-link" href="#索引访问方式"><span class="nav-number">5.6.5.2.</span> <span class="nav-text">索引访问方式</span></a><ol class="nav-child"><li class="nav-item nav-level-5"><a class="nav-link" href="#1-loose-index-scan（MySQL不支持）"><span class="nav-number">5.6.5.2.1.</span> <span class="nav-text">1. loose index scan（MySQL不支持）</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#2-伪loose-index-scan"><span class="nav-number">5.6.5.2.2.</span> <span class="nav-text">2. 伪loose index scan:</span></a></li><li class="nav-item nav-level-5"><a class="nav-link" href="#3-Tight-index-scan"><span class="nav-number">5.6.5.2.3.</span> <span class="nav-text">3. Tight index scan:</span></a></li></ol></li><li class="nav-item nav-level-4"><a class="nav-link" href="#distinct："><span class="nav-number">5.6.5.3.</span> <span class="nav-text">distinct：</span></a></li></ol></li><li class="nav-item nav-level-3"><a class="nav-link" href="#f-count"><span class="nav-number">5.6.6.</span> <span class="nav-text">f) count</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#g-limit-amp-offset"><span class="nav-number">5.6.7.</span> <span class="nav-text">g) limit & offset</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#h-union"><span class="nav-number">5.6.8.</span> <span class="nav-text">h) union</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#五-可扩展设计"><span class="nav-number">6.</span> <span class="nav-text">五. 可扩展设计</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#分布式事务"><span class="nav-number">6.1.</span> <span class="nav-text">分布式事务</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#最终一致性"><span class="nav-number">6.2.</span> <span class="nav-text">最终一致性</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Replication"><span class="nav-number">6.3.</span> <span class="nav-text">Replication</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#数据切分-shard"><span class="nav-number">6.4.</span> <span class="nav-text">数据切分(shard)</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#垂直"><span class="nav-number">6.4.1.</span> <span class="nav-text">垂直</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#水平"><span class="nav-number">6.4.2.</span> <span class="nav-text">水平</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#结合：先垂直再水平"><span class="nav-number">6.4.3.</span> <span class="nav-text">结合：先垂直再水平</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#切分后的整合"><span class="nav-number">6.4.4.</span> <span class="nav-text">切分后的整合</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#参考书籍："><span class="nav-number">7.</span> <span class="nav-text">参考书籍：</span></a></li></ol></div>
+            
+
+          </div>
+        </section>
+      <!--/noindex-->
+      
+
+      
+
+    </div>
+  </aside>
+
+
+        
+      </div>
+    </main>
+
+    <footer id="footer" class="footer">
+      <div class="footer-inner">
+        <div class="copyright" >
+  
+  &copy; 
+  <span itemprop="copyrightYear">2018</span>
+  <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+  <span class="author" itemprop="copyrightHolder">CYeJing</span>
+</div>
+
+
+<div class="powered-by">
+  由 <a class="theme-link" href="https://hexo.io">Hexo</a> 强力驱动
+</div>
+
+<div class="theme-info">
+  主题 -
+  <a class="theme-link" href="https://github.com/iissnan/hexo-theme-next">
+    NexT.Mist
+  </a>
+</div>
+
+
+        
+
+        
+      </div>
+    </footer>
+
+    
+      <div class="back-to-top">
+        <i class="fa fa-arrow-up"></i>
+        
+      </div>
+    
+
+  </div>
+
+  
+
+<script type="text/javascript">
+  if (Object.prototype.toString.call(window.Promise) !== '[object Function]') {
+    window.Promise = null;
+  }
+</script>
+
+
+
+
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+  <script type="text/javascript" src="/lib/jquery/index.js?v=2.1.3"></script>
+
+  
+  <script type="text/javascript" src="/lib/fastclick/lib/fastclick.min.js?v=1.0.6"></script>
+
+  
+  <script type="text/javascript" src="/lib/jquery_lazyload/jquery.lazyload.js?v=1.9.7"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/velocity/velocity.ui.min.js?v=1.2.1"></script>
+
+  
+  <script type="text/javascript" src="/lib/fancybox/source/jquery.fancybox.pack.js?v=2.1.5"></script>
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/utils.js?v=5.1.0"></script>
+
+  <script type="text/javascript" src="/js/src/motion.js?v=5.1.0"></script>
+
+
+
+  
+  
+
+  
+  <script type="text/javascript" src="/js/src/scrollspy.js?v=5.1.0"></script>
+<script type="text/javascript" src="/js/src/post-details.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  <script type="text/javascript" src="/js/src/bootstrap.js?v=5.1.0"></script>
+
+
+
+  
+
+
+  
+
+
+
+
+	
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+
+
+
+
+
+  
+
+
+
+
+
+  
+
+  
+  <script src="https://cdn1.lncld.net/static/js/av-core-mini-0.6.1.js"></script>
+  <script>AV.initialize("CA6DTKzeiOCnPArrdn9jsWRn-gzGzoHsz", "HhUohfVVfMV2KmqevJ1Aha54");</script>
+  <script>
+    function showTime(Counter) {
+      var query = new AV.Query(Counter);
+      var entries = [];
+      var $visitors = $(".leancloud_visitors");
+
+      $visitors.each(function () {
+        entries.push( $(this).attr("id").trim() );
+      });
+
+      query.containedIn('url', entries);
+      query.find()
+        .done(function (results) {
+          var COUNT_CONTAINER_REF = '.leancloud-visitors-count';
+
+          if (results.length === 0) {
+            $visitors.find(COUNT_CONTAINER_REF).text(0);
+            return;
+          }
+
+          for (var i = 0; i < results.length; i++) {
+            var item = results[i];
+            var url = item.get('url');
+            var time = item.get('time');
+            var element = document.getElementById(url);
+
+            $(element).find(COUNT_CONTAINER_REF).text(time);
+          }
+          for(var i = 0; i < entries.length; i++) {
+            var url = entries[i];
+            var element = document.getElementById(url);
+            var countSpan = $(element).find(COUNT_CONTAINER_REF);
+            if( countSpan.text() == '') {
+              countSpan.text(0);
+            }
+          }
+        })
+        .fail(function (object, error) {
+          console.log("Error: " + error.code + " " + error.message);
+        });
+    }
+
+    function addCount(Counter) {
+      var $visitors = $(".leancloud_visitors");
+      var url = $visitors.attr('id').trim();
+      var title = $visitors.attr('data-flag-title').trim();
+      var query = new AV.Query(Counter);
+
+      query.equalTo("url", url);
+      query.find({
+        success: function(results) {
+          if (results.length > 0) {
+            var counter = results[0];
+            counter.fetchWhenSave(true);
+            counter.increment("time");
+            counter.save(null, {
+              success: function(counter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(counter.get('time'));
+              },
+              error: function(counter, error) {
+                console.log('Failed to save Visitor num, with error message: ' + error.message);
+              }
+            });
+          } else {
+            var newcounter = new Counter();
+            /* Set ACL */
+            var acl = new AV.ACL();
+            acl.setPublicReadAccess(true);
+            acl.setPublicWriteAccess(true);
+            newcounter.setACL(acl);
+            /* End Set ACL */
+            newcounter.set("title", title);
+            newcounter.set("url", url);
+            newcounter.set("time", 1);
+            newcounter.save(null, {
+              success: function(newcounter) {
+                var $element = $(document.getElementById(url));
+                $element.find('.leancloud-visitors-count').text(newcounter.get('time'));
+              },
+              error: function(newcounter, error) {
+                console.log('Failed to create');
+              }
+            });
+          }
+        },
+        error: function(error) {
+          console.log('Error:' + error.code + " " + error.message);
+        }
+      });
+    }
+
+    $(function() {
+      var Counter = AV.Object.extend("Counter");
+      if ($('.leancloud_visitors').length == 1) {
+        addCount(Counter);
+      } else if ($('.post-title-link').length > 1) {
+        showTime(Counter);
+      }
+    });
+  </script>
+
+
+
+  
+<script>
+(function(){
+    var bp = document.createElement('script');
+    var curProtocol = window.location.protocol.split(':')[0];
+    if (curProtocol === 'https') {
+        bp.src = 'https://zz.bdstatic.com/linksubmit/push.js';        
+    }
+    else {
+        bp.src = 'http://push.zhanzhang.baidu.com/push.js';
+    }
+    var s = document.getElementsByTagName("script")[0];
+    s.parentNode.insertBefore(bp, s);
+})();
+</script>
+
+
+  
+
+  
+
+</body>
+</html>
