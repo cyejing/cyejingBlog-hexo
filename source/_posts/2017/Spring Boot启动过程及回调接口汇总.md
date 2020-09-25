@@ -11,7 +11,7 @@ date: 2017-07-10
 ## 启动顺序
 
 Spring boot的启动代码一般是这样的：
-
+<!--more-->
 ```java
 @SpringBootApplication
 public class SampleApplication {
@@ -66,7 +66,6 @@ public class SampleApplication {
 
 可以参考[官方文档][ref-boot-features-external-config]了解[StandardEnvironment][core-StandardEnvironment]构建好之后，其[MutablePropertySources][core-MutablePropertySources]内部到底有些啥东东。
 
-<!--more-->
 
 ### 创建及准备ApplicationContext
 

@@ -114,7 +114,7 @@ static void reserveMemory(long size, int cap) {
 ```
 
 上面代码就是jdk实现的堆外内存申请和释放的逻辑
-
+<!--more-->
 
 
 ### Netty对堆外内存有NoCleaner的实现
