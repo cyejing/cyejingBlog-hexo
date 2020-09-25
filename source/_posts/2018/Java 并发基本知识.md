@@ -3,16 +3,16 @@ title: Java 并发基本知识
 tags : [java]
 date : 2018-03-04
 ---
-# Java 并发基本知识
+# ava 并发基本知识
 
 - Java 并发基本知识
-  - [1. 为什么要多线程？]()
-  - [2. 线程基本操作]()
-  - [3. 线程的状态及分析]()
-  - [4. 线程中断]()
-  - [5. 互斥和协作]()
-  - [6. 死锁的4个必要条件]()
-  - [7. 常见的锁优化方法]()
+  - [1. 为什么要多线程？](http://cyejing.cn/2018/03/04/2018/Java 并发基本知识/)
+  - [2. 线程基本操作](http://cyejing.cn/2018/03/04/2018/Java 并发基本知识/)
+  - [3. 线程的状态及分析](http://cyejing.cn/2018/03/04/2018/Java 并发基本知识/)
+  - [4. 线程中断](http://cyejing.cn/2018/03/04/2018/Java 并发基本知识/)
+  - [5. 互斥和协作](http://cyejing.cn/2018/03/04/2018/Java 并发基本知识/)
+  - [6. 死锁的4个必要条件](http://cyejing.cn/2018/03/04/2018/Java 并发基本知识/)
+  - [7. 常见的锁优化方法](http://cyejing.cn/2018/03/04/2018/Java 并发基本知识/)
 
 ## 1. 为什么要多线程？
 
@@ -20,7 +20,7 @@ date : 2018-03-04
 2. 利用阻塞时的空闲CPU资源，`线程数 ≈ (运行时间 + 阻塞时间) / 运行时间`；
 3. 均分计算资源，让多个任务能同时推进，而不是只服务一个客户。
 
-<!--more-->
+
 
 ## 2. 线程基本操作
 
@@ -43,7 +43,7 @@ date : 2018-03-04
 
 线程的状态如下，其中绿色的4个状态对应java中`Thread.State`枚举类型的4个值。运行中线程的状态也是`runnable`：
 
-![Alt text](http://novoland.github.io/assets/img/d6c78c27079e697610a7b12e0b3faa42.png)
+![Alt text](../../images/d6c78c27079e697610a7b12e0b3faa42.png)
 
 用jdk自带工具`jstack`可以查看JVM内部线程的当前所处状态，及方法的调用栈。线程持有的锁 / 正在等待的锁 / 正在哪个对象上wait等信息也会被打印出来，这对排查死锁问题很有帮助：
 
@@ -72,7 +72,7 @@ $ jstack 31207 # pid
 
 阻塞状态不涉及进程外的阻塞（如IO阻塞），只描述JVM内部并发/主动休眠等原因导致的线程阻塞，3种细分：
 
-1. **blocked** 
+1. **blocked**
    专指等待获取monitor，进入`synchronized`块的线程。
 
    jstack输出:
@@ -81,7 +81,7 @@ $ jstack 31207 # pid
    java.lang.Thread.State: BLOCKED (on object monitor)
    ```
 
-2. **waiting** 
+2. **waiting**
    有两个方法会导致线程进入该状态：`Unsafe.park()` 和 `Object#wait`。
 
    前者用于阻塞某个线程，典型场景是使用了JUC包内提供的同步器或同步数据结构，它们的内部依赖`LockSupport`类阻塞线程，该类进一步调用了`Unsafe.park()`。它的jstack输出为：
@@ -96,7 +96,7 @@ $ jstack 31207 # pid
    java.lang.Thread.State: WAITING (on object monitor)
    ```
 
-3. **timed_waiting** 
+3. **timed_waiting**
    `Unsafe.park()` 和 `Object#wait()`的超时版本会让线程进入这个状态。
 
    此外，调用`Thread.sleep(...)`主动睡眠也是进入`timed_waiting`状态，此时jstack输出：
@@ -213,13 +213,13 @@ public void produce(){
 
 ## 6. 死锁的4个必要条件
 
-1. **资源独占** 
+1. **资源独占**
    资源的使用是互斥的。
-2. **不可剥夺** 
+2. **不可剥夺**
    不可强行从资源占有者手中夺取资源，只能由占有者自愿释放。
-3. **请求与保持** 
+3. **请求与保持**
    申请资源的时候同时保持对原有资源的占有。
-4. **循环等待** 
+4. **循环等待**
    若干线程同时持有的资源和请求的资源组成一个回路。
 
 ## 7. 常见的锁优化方法

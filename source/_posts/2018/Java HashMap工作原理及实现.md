@@ -46,7 +46,7 @@ for(Entry<String, Integer> entry : map.entrySet()) {
 > 地理: 6
 
 发生了什么呢？下面是一个大致的结构，希望我们对HashMap的结构有一个感性的认识：
-![hashmap](https://cloud.githubusercontent.com/assets/1736354/6957741/0c039b1c-d933-11e4-8c1e-7558a8766272.png)
+![hashmap](../../images/0c039b1c-d933-11e4-8c1e-7558a8766272.png)
 
 在官方文档中是这样描述HashMap的：
 
@@ -178,7 +178,7 @@ final Node<K,V> getNode(int hash, Object key) {
 ### 5. hash函数的实现
 
 在get和put的过程中，计算下标时，先对hashCode进行hash操作，然后再通过hash值进一步计算下标，如下图所示：
-![hash](https://cloud.githubusercontent.com/assets/1736354/6957712/293b52fc-d932-11e4-854d-cb47be67949a.png)
+![hash](../../images/293b52fc-d932-11e4-854d-cb47be67949a.png)
 
 在对hashCode()计算hash时具体实现是这样的：
 
@@ -225,13 +225,13 @@ static final int hash(Object key) {
 大致意思就是说，当超过限制的时候会resize，然而又因为我们使用的是2次幂的扩展(指长度扩为原来2倍)，所以，元素的位置要么是在原位置，要么是在原位置再移动2次幂的位置。
 
 怎么理解呢？例如我们从16扩展为32时，具体的变化如下所示：
-![rehash](https://cloud.githubusercontent.com/assets/1736354/6958256/ceb6e6ac-d93b-11e4-98e7-c5a5a07da8c4.png)
+![rehash](../../images/ceb6e6ac-d93b-11e4-98e7-c5a5a07da8c4.png)
 
 因此元素在重新计算hash之后，因为n变为2倍，那么n-1的mask范围在高位多1bit(红色)，因此新的index就会发生这样的变化：
-![resize](https://cloud.githubusercontent.com/assets/1736354/6958301/519be432-d93c-11e4-85bb-dff0a03af9d3.png)
+![resize](../../images/519be432-d93c-11e4-85bb-dff0a03af9d3.png)
 
 因此，我们在扩充HashMap的时候，不需要重新计算hash，只需要看看原来的hash值新增的那个bit是1还是0就好了，是0的话索引没变，是1的话索引变成“原索引+oldCap”。可以看看下图为16扩充为32的resize示意图：
-![resize16-32](https://cloud.githubusercontent.com/assets/1736354/6958677/d7acbad8-d941-11e4-9493-2c5e69d084c0.png)
+![resize16-32](../../images/d7acbad8-d941-11e4-9493-2c5e69d084c0.png)
 
 这个设计确实非常的巧妙，既省去了重新计算hash值的时间，而且同时，由于新增的1bit是0还是1可以认为是随机的，因此resize的过程，均匀的把之前的冲突的节点分散到新的bucket了。
 
