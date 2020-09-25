@@ -7,20 +7,20 @@ date : 2018-03-04
 
 # 一. 事务
 
-[WIKI](http://en.wikipedia.org/wiki/Isolation_%28database_systems%29)
+[WIKI](http://en.wikipedia.org/wiki/Isolation_(database_systems))
 
 事务并发会导致各类问题，SQL 标准预定义了4种事务隔离级别，以满足不同程度的并发。每种隔离级别都能保证解决若干并发问题。
 
 ## 1. 事务的 ACID
 
-| feature     | 解释                         |
-| ----------- | -------------------------- |
-| Atomic      | 原子，要么一起完成要么都不做             |
+| feature     | 解释                                                 |
+| :---------- | :--------------------------------------------------- |
+| Atomic      | 原子，要么一起完成要么都不做                         |
 | Consistency | 事务开始前和结束后数据都是满足约束规则的，如外键约束 |
-| Isolation   | 隔离性，并发事务之间不会互相影响，就像串行执行一样  |
-| Duaration   | 持久性，事务造成的修改是持久的，故障也不会丢失    |
+| Isolation   | 隔离性，并发事务之间不会互相影响，就像串行执行一样   |
+| Duaration   | 持久性，事务造成的修改是持久的，故障也不会丢失       |
 
-<!--more-->
+
 
 ## 2. 并发事务产生的问题
 
@@ -44,11 +44,11 @@ date : 2018-03-04
 
 5. 第二类丢失更新 (`覆盖丢失`)：
 
-   A 和 B 查询同样的记录，进行 “读取、计算、更新”，即各自 ~~**基于最初查询的结果** ~~（非必须） 更新记录并提交，后提交的数据将覆盖先提交的，导致最终数据错误。
+   A 和 B 查询同样的记录，进行 “读取、计算、更新”，即各自 ~~**基于最初查询的结果** ~~~（非必须） 更新记录并提交，后提交的数据将覆盖先提交的，导致最终数据错误。
 
    并发进行自增 / 自减是发生覆盖丢失的一个典型场景：
 
-   ![Alt text](http://novoland.github.io/assets/img/a532fd94ccd31a031bd3700865b231c9.png)
+   ![Alt text](../../images/a532fd94ccd31a031bd3700865b231c9-20200925174543963.png)
 
    其中一个事务的更新被另外一个覆盖了，最终导致 i 错误。
 
@@ -80,12 +80,12 @@ date : 2018-03-04
 
 总结：
 
-| .               | 脏读   | 不可重复读 | 幻读   | 第二类丢失更新 |
-| --------------- | ---- | ----- | ---- | ------- |
-| read uncommited | √    | √     | √    | √       |
-| read commited   | `X`  | √     | √    | √       |
-| repeatable read | `X`  | `X`   | √    | √       |
-| serial          | `X`  | `X`   | `X`  | `X`     |
+| .               | 脏读 | 不可重复读 | 幻读 | 第二类丢失更新 |
+| :-------------- | :--- | :--------- | :--- | :------------- |
+| read uncommited | √    | √          | √    | √              |
+| read commited   | `X`  | √          | √    | √              |
+| repeatable read | `X`  | `X`        | √    | √              |
+| serial          | `X`  | `X`        | `X`  | `X`            |
 
 ------
 
@@ -104,7 +104,7 @@ InnoDB 在锁的基础上还搭配了 MVCC 作为优化，实现以上事务隔�
 
 ### 锁优化1：拆分，读写锁
 
-读锁 – 共享锁 – shared 
+读锁 – 共享锁 – shared
 写锁 – 排他锁 – exclusive
 
 工作方式和 JUC 里的读写锁一样。
@@ -115,7 +115,7 @@ InnoDB 在锁的基础上还搭配了 MVCC 作为优化，实现以上事务隔�
 
 #### 表锁
 
-显式的表锁： 
+显式的表锁：
 `lock table xxx read/write;`
 
 MyISAM几乎完全依赖MySQL服务器提供的表锁机制，查询自动加S表锁，更新自动加X表锁。
@@ -123,17 +123,15 @@ MyISAM几乎完全依赖MySQL服务器提供的表锁机制，查询自动加S�
 #### 使用MyISAM时注意对表锁的优化：
 
 1. 缩短锁定时间：拆分query / 索引
-
 2. 打开concurrent insert(在尾部并发insert)
 
 
-   ​
 
-   - 0 关闭尾部并发insert
-   - 1 如果MyISAM表中没有空洞（即表的中间没有被删除的行），MyISAM允许在一个事务读表的同时，另一个事务从表尾插入记录。这也是MySQL的默认设置。
-   - 2 无论MyISAM表中有没有空洞，都允许在表尾并发插入记录
+- 0 关闭尾部并发insert
+- 1 如果MyISAM表中没有空洞（即表的中间没有被删除的行），MyISAM允许在一个事务读表的同时，另一个事务从表尾插入记录。这也是MySQL的默认设置。
+- 2 无论MyISAM表中有没有空洞，都允许在表尾并发插入记录
 
-3. 根据需要设置读写的优先级。默认写大于读
+1. 根据需要设置读写的优先级。默认写大于读
 
 #### 行锁
 
@@ -148,16 +146,16 @@ update/delete/insert 动作会自动加x锁。
 
 #### 查询锁的争用情况
 
-1. 表锁 
-   `show status like 'table%'` 
-   `Table_locks_immediate`:立即获得表锁的次数 
+1. 表锁
+   `show status like 'table%'`
+   `Table_locks_immediate`:立即获得表锁的次数
    `Table_locks_waited`:需要等待获得表锁的次数
-2. innodb的行锁 
-   `show status like 'innodb_row_lock'` 
-   current_waits: 
-   waits: 
-   time: 
-   time_avg: 
+2. innodb的行锁
+   `show status like 'innodb_row_lock'`
+   current_waits:
+   waits:
+   time:
+   time_avg:
    time_max:
 
 ## 2. MVCC
@@ -208,25 +206,25 @@ lock read 操作的是数据的最新版本，且对记录加锁。以下动作�
 
 注意，无法使用索引时会走主索引实现全表扫描，此时会给所有的记录加上record lock，并对其所有的区间加gap lock，表完全锁死，此时只能进行 snapshot read，极大地降低并发，这就是为何update/delete尽量要走索引的原因。
 
-[何登成的《MySQL 加锁处理分析》](http://hedengcheng.com/?p=771) 
+[何登成的《MySQL 加锁处理分析》](http://hedengcheng.com/?p=771)
 [innodb-record-level-locks`](http://dev.mysql.com/doc/refman/5.0/en/innodb-record-level-locks.html)
 
 > MySQL/InnoDB定义的4种隔离级别：
 >
-> Read Uncommited 
+> Read Uncommited
 > 可以读取未提交记录。此隔离级别，不会使用，忽略。
 >
-> Read Committed (RC) 
+> Read Committed (RC)
 > 快照读忽略，本文不考虑。
 >
 > 针对当前读，RC隔离级别保证对读取到的记录加锁 (记录锁)，存在幻读现象。
 >
-> Repeatable Read (RR) 
+> Repeatable Read (RR)
 > 快照读忽略，本文不考虑。
 >
 > 针对当前读，RR隔离级别保证对读取到的记录加锁 (记录锁)，同时保证对读取的范围加锁，新的满足查询条件的记录不能够插入 (间隙锁)，不存在幻读现象。
 >
-> Serializable 
+> Serializable
 > 从MVCC并发控制退化为基于锁的并发控制。不区别快照读与当前读，所有的读操作均为当前读，读加读锁 (S锁)，写加写锁 (X锁)。
 >
 > Serializable隔离级别下，读写冲突，因此并发度急剧下降，在MySQL/InnoDB下不建议使用。
@@ -247,15 +245,15 @@ IO or CPU?
 
 1. join时小结果集驱动大结果集
 2. 利用索引完成排序/分组
-3. 只取需要的列（？） 
-   a. network 
-   b. 不能使用Covering index 
+3. 只取需要的列（？）
+   a. network
+   b. 不能使用Covering index
    c. 优化排序
-4. 仅仅使用最有效的过滤条件 
+4. 仅仅使用最有效的过滤条件
    建立索引的字段越小越好，减少IO
-5. 避免复杂join和子查询 
-   对于MyISAM，join会锁住所有相关的表（s lock），可能阻塞DML其他很长时间，此时可以在程序中做join，降低对锁的占用，减少阻塞； 
-   对应用而言，SQL的执行时间：网络/执行（CPU+IO）/锁阻塞，优化瓶颈 
+5. 避免复杂join和子查询
+   对于MyISAM，join会锁住所有相关的表（s lock），可能阻塞DML其他很长时间，此时可以在程序中做join，降低对锁的占用，减少阻塞；
+   对应用而言，SQL的执行时间：网络/执行（CPU+IO）/锁阻塞，优化瓶颈
    子查询实现不好，不一定会走索引
 
 ## Explain
@@ -272,8 +270,8 @@ MyISAM 和 InnoDB 的索引，采用的数据结构都是B+树。
 
 ### B树
 
-B树的结构类似二叉查找树，只不过节点的度远远大于2，查找的复杂度为树的高度，O(logdN)： 
-![Alt text](http://novoland.github.io/assets/img/81bb92fa7c27d9aef499efc82c4aaa73.png)
+B树的结构类似二叉查找树，只不过节点的度远远大于2，查找的复杂度为树的高度，O(logdN)：
+![Alt text](../../images/81bb92fa7c27d9aef499efc82c4aaa73-20200925174543649.png)
 
 通常会将根据硬盘上一个page的大小来调整节点的度，原因是：
 
@@ -284,12 +282,12 @@ B树的结构类似二叉查找树，只不过节点的度远远大于2，查找
 
 B+树是对B树的优化：
 
-1. 只有叶子节点存data，内节点只存key； 
-   好处：** 提高内节点的度，降低高度 \**
-2. 叶子节点加上了next指针，形成一个链表 
-   好处：** 快速范围查找，只需确定起点和终点，顺序扫描即可 \**
+1. 只有叶子节点存data，内节点只存key；
+   好处：** 提高内节点的度，降低高度 **
+2. 叶子节点加上了next指针，形成一个链表
+   好处：** 快速范围查找，只需确定起点和终点，顺序扫描即可 **
 
-![Alt text](http://novoland.github.io/assets/img/9467b1f6665fb48464f4699db1a4bec2.png)
+![Alt text](../../images/9467b1f6665fb48464f4699db1a4bec2-20200925174544022.png)
 
 ## 2. MyISAM的索引
 
@@ -297,7 +295,7 @@ B+树是对B树的优化：
 
 主键索引和非主键索引结构一致，叶子节点存储的是行的物理位置信息（row number）
 
-![Alt text](http://novoland.github.io/assets/img/10b0700762cf9c5bfd97396ccfb7c8b3.png)
+![Alt text](../../images/10b0700762cf9c5bfd97396ccfb7c8b3-20200925174553359.png)
 
 ## 3. InnoDB的索引
 
@@ -307,7 +305,7 @@ B+树是对B树的优化：
 
 如果没有主键，InnoDB会试着使用一个Unique Nonnullable index代替；如果没有这种索引，会定义隐藏的主键。
 
-![Alt text](http://novoland.github.io/assets/img/f83dae9c2efa594efdea1adc45fb31d7.png)
+![Alt text](../../images/f83dae9c2efa594efdea1adc45fb31d7-20200925174544285.png)
 
 ### secondary index
 
@@ -322,17 +320,14 @@ B+树是对B树的优化：
 1. B+树的节点按page聚集，存储着数据，因此主索引叶子节点分裂的机会远远大于非聚集索引；split会导致
 
 
-   ​
 
-   - 移动大量数据;
-   - 需要更多空间（碎片）;
-   - split时会给整个索引加x锁，不可访问
+- 移动大量数据;
+- 需要更多空间（碎片）;
+- split时会给整个索引加x锁，不可访问
 
-2. 按主键顺序插入最快，因为记录被顺序插到索引的最末，节点 split 的开销很小；乱序插入慢，因为新记录很大机会被插入到已满的叶子节点，引起频繁分裂，因此 InnoDB **更适合用自增主键**；
-
-3. secondary index包含了主键，体积可能很大，因此 **不适合用过长字段当主键**；
-
-4. 在secondary index上可能需要查找两次，一次查自己，一次查主索引。
+1. 按主键顺序插入最快，因为记录被顺序插到索引的最末，节点 split 的开销很小；乱序插入慢，因为新记录很大机会被插入到已满的叶子节点，引起频繁分裂，因此 InnoDB **更适合用自增主键**；
+2. secondary index包含了主键，体积可能很大，因此 **不适合用过长字段当主键**；
+3. 在secondary index上可能需要查找两次，一次查自己，一次查主索引。
 
 ## 4. 什么样的查询条件会走索引?
 
@@ -362,20 +357,20 @@ B+树是对B树的优化：
 
 ### a) 不适合创建索引的情况
 
-1. **唯一性太差的列** 
+1. **唯一性太差的列**
    引擎根据统计信息会做优化，可能建了也不走
-2. **频繁更新的列** 
+2. **频繁更新的列**
    需要同时维护索引和数据
 
 ### b) 前缀索引 和 selectivity（选择性）
 
-问题：列太长，太消耗空间；解决方案：用前缀建立索引 
-但是又要保证良好的selectivity 
+问题：列太长，太消耗空间；解决方案：用前缀建立索引
+但是又要保证良好的selectivity
 selectivity = (distinct values) / all records
 
 ### c) 尽量使用多列复合索引而不是多个单列索引
 
-减少维护索引的开销 
+减少维护索引的开销
 多个单列索引老版本只会选一个，5.0以后可以用index merge，扫描多个再合并结果（or/and）
 
 ### d) 选择正确的列顺序
@@ -389,7 +384,7 @@ selectivity = (distinct values) / all records
 
 ### b) 使用“覆盖索引”技巧
 
-Covering index: 覆盖了查询的所有列，避免访问数据文件/聚集索引 
+Covering index: 覆盖了查询的所有列，避免访问数据文件/聚集索引
 发起的查询被索引覆盖时，会在Extra出现Using Index
 
 ### c) 优化join
@@ -398,12 +393,12 @@ MySQL只支持nested loop join，没有hash join或者sort merge join。
 
 > 数据库 join 类型：
 >
-> 1. `nested-loop join` 
+> 1. `nested-loop join`
 >    两层循环，分驱动表（外层，小）和被驱动表（内层）。MySQL 只有这种 join 方式。
-> 2. `sort-merge join` 
->    两边都先 sort（有索引就不用了），用两个指针指向两边的第一个元素，依次找相同值。 
+> 2. `sort-merge join`
+>    两边都先 sort（有索引就不用了），用两个指针指向两边的第一个元素，依次找相同值。
 >    和 nested-loop join 类似，但利用了排序的性质，内层循环从上次停止的地方开始就可以，不要从头开始找起。
-> 3. `hash join` 
+> 3. `hash join`
 >    一边构造一个哈希表（或布隆过滤器），另一边依次判断记录是否在其中
 
 当join无法使用索引（type是all/index/range/index_merge，用到是ref）时会用到join buffer，缓存中间的结果集
@@ -413,19 +408,15 @@ MySQL只支持nested loop join，没有hash join或者sort merge join。
 1. 某些情况下拆分join效率更高：
 
 
-   ​
 
-   - 在应用端可以利用缓存
-   - 减少MyISAM的表锁时间
-   - 对大表用in替换join，更高效
+- 在应用端可以利用缓存
+- 减少MyISAM的表锁时间
+- 对大表用in替换join，更高效
 
-2. 减小最外层循环次数，即用小结果集驱动join（优化器会帮你挑选较小的表做驱动表）
-
-3. 保证被驱动表上的join字段被索引
-
-4. 只 group by 或 order by 驱动表上的列，这样可以在 join 前排序
-
-5. 被驱动表无法走索引时，保证join buffer足够大
+1. 减小最外层循环次数，即用小结果集驱动join（优化器会帮你挑选较小的表做驱动表）
+2. 保证被驱动表上的join字段被索引
+3. 只 group by 或 order by 驱动表上的列，这样可以在 join 前排序
+4. 被驱动表无法走索引时，保证join buffer足够大
 
 ### d) 优化 order by
 
@@ -448,19 +439,17 @@ MySQL只支持nested loop join，没有hash join或者sort merge join。
 1. 尽量走索引
 
 
-   ​
 
-   - order by时必须要能使用索引的最左前缀(order by+where条件中的常量组成最左前缀也可以)，且order by的方向都相同
-   - join时，order by的列如果引用第一个表（驱动表），可以在 join 前先排好序
+- order by时必须要能使用索引的最左前缀(order by+where条件中的常量组成最左前缀也可以)，且order by的方向都相同
+- join时，order by的列如果引用第一个表（驱动表），可以在 join 前先排好序
 
-2. 优化filesort
+1. 优化filesort
 
 
-   ​
 
-   - 内存多时加大max_length_for_sort_data，返回记录小于时用新算法，大于用老算法；
-   - 用第二种算法时，去掉不必要的返回字段（会用更多内存）
-   - 加大sort_buffer_size，减小排序过程的IO
+- 内存多时加大max_length_for_sort_data，返回记录小于时用新算法，大于用老算法；
+- 用第二种算法时，去掉不必要的返回字段（会用更多内存）
+- 加大sort_buffer_size，减小排序过程的IO
 
 ### e) 优化 group by / distinct
 
@@ -516,9 +505,9 @@ MySQL只支持nested loop join，没有hash join或者sort merge join。
 
 注意区分以下两种 count ：
 
-1. `count(*)` 
+1. `count(*)`
    统计结果集的行
-2. `count(列/表达式)` 
+2. `count(列/表达式)`
    统计值的个数，排除null
 
 MyISAM维护了表的总行数，所以没有where条件的 count(*) 很快。
@@ -549,11 +538,11 @@ MySQL总是用temp table实现union
 
 使用`union all`而不是`union`，后者会对temp table做distinct操作，开销很大
 
-** 附：数据访问方式，出现在explain的type列里 \**
+** 附：数据访问方式，出现在explain的type列里 **
 
 1. (all) Full table scan 全表扫描
 2. (index) Index scan 索引全部扫描：找到最左叶子节点，然后走链表
-3. (range) Range Scan 索引范围扫描：找到范围的最左（右）侧叶子，然后走链表 
+3. (range) Range Scan 索引范围扫描：找到范围的最左（右）侧叶子，然后走链表
    例外：in显示的是range，但是是索引唯一扫描，等同于多个相等条件
 4. (ref/eq_ref) Unique Index Lookup 索引唯一扫描，走树
 5. (const) Constant
@@ -571,12 +560,12 @@ MySQL总是用temp table实现union
 
 为了HA/负载均衡需要冗余数据，数据冗余的地方就存在一致性的问题
 
-同一个数据只要保存在多个地方，且至少有一个地方被写，就存在一致性问题 
+同一个数据只要保存在多个地方，且至少有一个地方被写，就存在一致性问题
 如果保存在多个地方被写，情况就更复杂了，涉及到数据的传播/并发/事务，尽量避免这个情况，保证数据在一个地方被增删改。
 
 > shard还是一个数据在一个地方
 
-如果session是各个容器自己管理的，因为要是强一致性的，必然需要session的复制 
+如果session是各个容器自己管理的，因为要是强一致性的，必然需要session的复制
 如果每个容器有自己的本地cache，且会update/remove，和cpu的L1/L2/L3缓存的情形类似，都要实现cache的传播
 
 ## Replication
@@ -588,19 +577,19 @@ MySQL总是用temp table实现union
 
 ### 垂直
 
-按业务模块切分 
+按业务模块切分
 需要程序进行不同库之间的join
 
 ### 水平
 
-每个库的表结构是一样的，按id划分数据 
+每个库的表结构是一样的，按id划分数据
 数据局部性好，很多表关联/事务能够在一个DB完成
 
 ### 结合：先垂直再水平
 
 ### 切分后的整合
 
-统一数据访问层 – 路由规则/解析sql/合并结果/join/分布式事务/负载均衡都可以在这一层搞定 
+统一数据访问层 – 路由规则/解析sql/合并结果/join/分布式事务/负载均衡都可以在这一层搞定
 一些开源产品：
 
 > 1. MySQL Proxy
@@ -608,24 +597,25 @@ MySQL总是用temp table实现union
 1. Amoeba (JDBC以下)
 
 
-   ​
 
-   query路由/过滤，负载均衡，读写分离，HA
+query路由/过滤，负载均衡，读写分离，HA
 
-​    
 
-   ​
 
-   主要解决：
 
-​    
 
-   ​
+主要解决：
 
-      1. 数据切分后复杂数据源整合;
-      2. 提供数据切分规则并降低数据切分规则给数据库带来的影响;
-      3. 降低数据库与客户端的连接数;
-      4. 读写分离路由
+
+
+
+
+```
+  1. 数据切分后复杂数据源整合;
+  2. 提供数据切分规则并降低数据切分规则给数据库带来的影响;
+  3. 降低数据库与客户端的连接数;
+  4. 读写分离路由
+```
 
 > Amoeba for MySQL/Aladin
 >
@@ -635,7 +625,7 @@ MySQL总是用temp table实现union
 
 1. 分布式事务
 2. 跨节点join
-3. 跨节点合并排序分页 
+3. 跨节点合并排序分页
    都由应用解决吧
 
 # 参考书籍：

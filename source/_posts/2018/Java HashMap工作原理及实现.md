@@ -15,7 +15,7 @@ date : 2018-03-04
 > 4. 你知道hash的实现吗？为什么要这样实现？
 > 5. 如果HashMap的大小超过了负载因子(load factor)定义的容量，怎么办？
 
-<!--more-->
+
 
 当我们执行下面的操作时：
 
@@ -363,5 +363,5 @@ final Node<K,V>[] resize() {
 [Java 8：HashMap的性能提升](http://www.importnew.com/14417.html)
 [JEP 180: Handle Frequent HashMap Collisions with Balanced Trees](http://openjdk.java.net/jeps/180)
 [ConurrentHashMap和Hashtable的区别](http://www.importnew.com/7166.html)
-[HashMap和Hashtable的区别](http://www.importnew.com/7010.html)
+[HashMap和Hashtable的区别](http://www.importnew.com/7010.html)http://www.importnew.com/7010.html)
 

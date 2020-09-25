@@ -14,7 +14,7 @@ JMM屏蔽掉底层不同平台的差异，在语言层面为程序员提供一�
 1. **编译器重排序**
 2. **CPU 重排序**
 
-<!--more-->
+
 
 ## 2. 编译器的重排序
 
@@ -38,8 +38,8 @@ _ReadWriteBarrier(); // Microsoft Visual C++
 
 JMM在为编译器重排序定义了如下规则（NO表示不可重排序）：
 
-| 1nd \\\ 2nd                   | Normal Load / Normal Store | Volatile Load / Monitor Enter | Volatile Store / Monitor Exit |
-| ----------------------------- | -------------------------- | ----------------------------- | ----------------------------- |
+| 1nd \\ 2nd                    | Normal Load / Normal Store | Volatile Load / Monitor Enter | Volatile Store / Monitor Exit |
+| :---------------------------- | :------------------------- | :---------------------------- | :---------------------------- |
 | Normal Load / Normal Store    |                            |                               | NO                            |
 | Volatile Load / Monitor Enter | NO                         | NO                            | NO                            |
 | Volatile store / Monitor Exit |                            | NO                            | NO                            |
@@ -48,7 +48,7 @@ JMM在为编译器重排序定义了如下规则（NO表示不可重排序）：
 
 简单地说就是在3类地方禁止编译器重排序：
 
-![Alt text](http://novoland.github.io/assets/img/d08f4d58e9f50ecfc929b199829526c4.png)
+![Alt text](../../images/d08f4d58e9f50ecfc929b199829526c4-20200925174309918.png)
 
 1. `Volatile 读` & `Sychronized 块的进入` 与 **后续任意读写** 不可重排；
 2. `Volatile 写` & `Sychronized 块的离开` 与 **之前任意读写** 不可重排；
@@ -66,7 +66,7 @@ CPU 为了避免慢速的内存访问拖累指令的执行速度，一个常用�
 
 此外，为了充分利用多级流水线，CPU 的 `预测执行 speculative execution` 机制会根据以往的执行情况，在一个判断条件还没得到结果时预先执行概率大的分支并缓存结果，如果条件判断通过则直接使用该中间结果，这也会导致指令的乱序。
 
-![Alt text](http://novoland.github.io/assets/img/fd9868241dc03d1519b75f4ed3ad547b.png)
+![Alt text](../../images/fd9868241dc03d1519b75f4ed3ad547b-20200925174309976.png)
 
 如图所示，CPU 的执行单元与 cache 之间还存在着各种 buffer，`load store`指令会先进入这些 buffer 中排队。当指令一旦被 `flush` 到 cache ，MESI 缓存一致性协议将保证数据对所有 CPU 可见。
 
@@ -155,33 +155,33 @@ ready = true
 
 `Memory Model`指定了 CPU 允许哪些指令重排序的发生，越多，内存一致性越弱；越少，内存一致性就越强。
 
-![Alt text](http://novoland.github.io/assets/img/3f85cd91f478831a157afc5179bccf2b.png)
+![Alt text](../../images/3f85cd91f478831a157afc5179bccf2b-20200925174309979.png)
 
 常见的 x86 平台只允许 `StoreLoad` 乱序，因此它的内存模型属于强一致性。
 
-不同平台上这四种 memory barrier 对应的指令如下，其中 x86 因为只支持`StoreLoad`乱序，所以只提供了`StoreLoad Barrier (亦即Full Barrier)`: 
-![Alt text](http://novoland.github.io/assets/img/aaddce10fc3455e3fdc05bca8e83ff62.png)
+不同平台上这四种 memory barrier 对应的指令如下，其中 x86 因为只支持`StoreLoad`乱序，所以只提供了`StoreLoad Barrier (亦即Full Barrier)`:
+![Alt text](../../images/aaddce10fc3455e3fdc05bca8e83ff62-20200925174310884.png)
 
 ### 3.5 `Read-Acquire barrier` 和 `Write-Release barrier`
 
 在实际应用中，4种按乱序情况的分法太细粒度了，`Read-Acquire barrier` 、 `Write-Release barrier` 是一种更粗粒度，也更常用的分类方式；
 
-![Alt text](http://novoland.github.io/assets/img/41491455e62a0c75bf08d2d5c155ddc3.png)
+![Alt text](../../images/41491455e62a0c75bf08d2d5c155ddc3-20200925174310166.png)
 
 即：
 
 - Read-Acquire = LoadLoad + LoadStore;
 - Write-Release = LoadStore + StoreStore.
 
-`Read-Acquire` 
+`Read-Acquire`
 具有 Read-Acquire 语义的 Read 操作保证，所有后续的读写只有在该 Read 执行完毕后才能执行。
 
-`Write-Release` 
+`Write-Release`
 具有 Write-Release 语义的 Write 操作保证，只有之前的所有读写都已经执行完毕，该 write 才能执行。
 
 `Read-Acquire barrier` 和 `Write-Release barrier` 总是成对使用的，**保证不同线程间对内存操作的顺序性**：
 
-![Alt text](http://novoland.github.io/assets/img/43fe44f8dfcd17efb0a19880fd8d7c2d.png)
+![Alt text](../../images/43fe44f8dfcd17efb0a19880fd8d7c2d-20200925174310614.png)
 
 还是举上面的例子，用`Read-Acquire`和`Write-Release` barrier 的方式如下：
 
@@ -204,7 +204,7 @@ if(ready){
 
 此时，我们 **为 ready 这个变量赋予了 Read-Acquire 和 Write-Release 语义**，对它的读或写动作与前后的其他 load/store 动作确立了先后关系. 当 Thread 2 发现 ready 为 true 时，a 的 store 必然已经完成，必然为1; 而 a 的 load 也不会比 ready 的 load 先完成.
 
-`Read-Acquire` 和 `Write-Release` 语义也被广泛应用在锁的实现中，**加锁 和 释放锁 分别附带了Read-Acquire 和Write-Release 语义，保证了 加锁 --> load/store 和 load/store --> 释放锁 这两个指令序列之间的偏序关系**，这样当某个线程获取了锁时，它可以确信前一个线程在释放锁之前所做的操作已经全部完成了。
+`Read-Acquire` 和 `Write-Release` 语义也被广泛应用在锁的实现中，**加锁 和 释放锁 分别附带了Read-Acquire 和Write-Release 语义，保证了 加锁 –> load/store 和 load/store –> 释放锁 这两个指令序列之间的偏序关系**，这样当某个线程获取了锁时，它可以确信前一个线程在释放锁之前所做的操作已经全部完成了。
 
 接下来会看到，`Read-Acquire` 和 `Write-Release` 是 JMM 的核心。
 
@@ -213,7 +213,7 @@ if(ready){
 JMM 定义了单线程内必须遵循如下重排序规则：
 
 | NormalLoad                  | NormalStore | VolatileLoad / MonitorEnter | VolatileStore / MonitorExit |
-| --------------------------- | ----------- | --------------------------- | --------------------------- |
+| :-------------------------- | :---------- | :-------------------------- | :-------------------------- |
 | NormalLoad                  |             |                             |                             |
 | NomalStore                  |             |                             |                             |
 | VolatileLoad / MonitorEnter | LoadLoad    | LoadStore                   | LoadLoad                    |
@@ -221,15 +221,15 @@ JMM 定义了单线程内必须遵循如下重排序规则：
 
 看上去很复杂，但其实只有两点：
 
-1. ** Volatile 变量 / Monitor具有 Read-Acquire & Write-Release 语义； \**
+1. ** Volatile 变量 / Monitor具有 Read-Acquire & Write-Release 语义； **
 
    第三行即 `Read-Acquire`，最后一列即 `Write-Release`；
 
-2. ** 在任意两个 Volatile 变量 / Monitor 的 Store->Load / Exit->Enter 操作中间必须插入一个 StoreLoad barrier 禁止重排序; 这同时也解决了单个 volatile 变量 / Monitor 可能出现的可见性问题 。\**
+2. ** 在任意两个 Volatile 变量 / Monitor 的 Store->Load / Exit->Enter 操作中间必须插入一个 StoreLoad barrier 禁止重排序; 这同时也解决了单个 volatile 变量 / Monitor 可能出现的可见性问题 。**
 
    可见性问题已经在3.3描述过了.
 
-![Alt text](http://novoland.github.io/assets/img/76c4cf48eb5fc3fc8f6dde0593ee85ef.png)
+![Alt text](../../images/76c4cf48eb5fc3fc8f6dde0593ee85ef-20200925174310100.png)
 
 JMM cookbook 中提到了一种可能的实现。编译器很多时候无法知道确切的`Load` / `Store` 指令顺序，比如在一个方法 return 之前对一个 Volatile 变量 write 了，因此一个策略是采取悲观策略，在每个可能需要禁止某种重排序的地方都加上对应的 barrier：
 
@@ -239,7 +239,7 @@ JMM cookbook 中提到了一种可能的实现。编译器很多时候无法知�
 
 当然，编译器会做许多别的优化，比如合并 barrier 之类的，而且很大一部分的 barrier 对应到硬件指令时是空操作。
 
-这个策略在 openjdk 的 C1 编译器[ (c1_LIRGenerator.cpp) ](https://www.evernote.com/OutboundRedirect.action?dest=https%3A%2F%2Fcode.google.com%2Fp%2Fneedle%2Fsource%2Fbrowse%2Fsrc%2Fshare%2Fvm%2Fc1%2Fc1_LIRGenerator.cpp%3Fr%3D2f644f85485d7460dea5edb5f6c8716093e66a44)中得到了印证：
+这个策略在 openjdk 的 C1 编译器[ (c1_LIRGenerator.cpp) ](https://www.evernote.com/OutboundRedirect.action?dest=https://code.google.com/p/needle/source/browse/src/share/vm/c1/c1_LIRGenerator.cpp?r=2f644f85485d7460dea5edb5f6c8716093e66a44)中得到了印证：
 
 ```
 //------------------------field access--------------------------------------
@@ -301,7 +301,6 @@ void LIRGenerator::do_LoadField(LoadField* x) {
         __ membar_acquire();
     }
 }
-
 ```
 
 ## 3. JMM的其他方面
@@ -331,5 +330,5 @@ void LIRGenerator::do_LoadField(LoadField* x) {
 
 ------
 
-附：`StoreLoad` 乱序导致 `Peterson 算法` 失效 
+附：`StoreLoad` 乱序导致 `Peterson 算法` 失效
 这不属于通用问题，而是依赖代码的逻辑。
