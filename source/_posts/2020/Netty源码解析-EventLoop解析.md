@@ -4,12 +4,11 @@ tags : [netty]
 date: 2020-07-10
 ---
 
-
 # EventLoop 解析
 
 首先看看 NioEventLoop 的继承图：
 
-![](../../images/4236553-3e7c165ac61a7b12.png)
+{% asset_img 4236553-3e7c165ac61a7b12-20200925204856017.png %}
 
 使用红框标出了重点部分：
 
@@ -17,10 +16,11 @@ date: 2020-07-10
 2. EventLoop 接口：Netty 接口文档说明该接口作用：一旦 Channel 注册了，就处理该Channel对应的所有I/O 操作。
 3. SingleThreadEventExecutor 表示这是一个单个线程的线程池。
 
-解析Loop的核心方法``run``
-<!--more-->
+解析Loop的核心方法`run`
 
-```java
+
+
+```
 @Override
 protected void run() {
     int selectCnt = 0;
@@ -142,7 +142,7 @@ protected void run() {
 
 ### 核心select方法
 
-```java
+```
 private void select(boolean oldWakenUp) throws IOException {
     Selector selector = this.selector;
     try {
@@ -266,10 +266,7 @@ private void processSelectedKeysOptimized() {
 
 好了，该方法的重点应该是 processSelectedKey 方法，而判断则是 a instanceof AbstractNioChannel ，还记得 Channel 注册的时候吗：
 
-[![AbstractNioChannel doRegister 方法 ](../../../images/4236553-78bf24285a1c4020.png)]()
-
-
-
+{% asset_img 4236553-78bf24285a1c4020-20200925204856018.png %}
 
 从上面的代码中可以看出，Netty 会将 Channel 绑定到 key 上，然后在循环到事件处理的时候，拿出来直接使用。
 
@@ -370,17 +367,13 @@ protected boolean runAllTasks(long timeoutNanos) {
 
 最后对 lastExecutionTime 进行赋值，有什么作用呢？在 confirmShutdown 方法中，会对该变量进行判断：
 
-[![判断](../../images/4236553-b95093bb91f820ba.png)]()
+{% asset_img 4236553-b95093bb91f820ba-20200925204856020.png %}
 
-
-
-[![通常该方法都在死循环中](../../images/4236553-8f367362b57a6cce.png)]()
+{% asset_img 4236553-8f367362b57a6cce-20200925204856019.png %}
 
 在 EventLoop 的父类 SingleThreadEventExecutor 的 doStartThread 方法的 finally 块中，也就是如果 run 方法结束了，会执行这里的逻辑，确认是否关闭了，如果定时任务最后一次的执行时间距离现在的时间 小于等于 `优雅关闭的静默期时间（默认2秒）`，则唤醒 selector，并睡眠 0.1 秒，返回 false，表示还没有关闭呢？并继续循环，在 confirmShutdown 的上方逻辑上回继续调用 runAllTasks 方法。此处应该时担心关闭的时候还有尚未完成的定时任务吧。
 
 好，到这里，关于 runAllTasks 方法就解释的差不多了。
-
-
 
 ## 总结
 

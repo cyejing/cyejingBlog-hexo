@@ -15,9 +15,7 @@ ClassPathXmlApplicationContext用于加载CLASSPATH下的Spring配置文件
 
 以下是继承的类图
 
-![diagram](/images/applicationContext.png)
-
-
+{% asset_img applicationContext.png %}
 
 加载的主要流程: AbstractApplicationContext.refresh()
 

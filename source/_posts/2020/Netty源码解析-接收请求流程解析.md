@@ -237,9 +237,8 @@ date: 2020-07-10
 
 Channel类图如下
 
-![NioSocketChannel](../../images/NioSocketChannel.png)
+{% asset_img NioSocketChannel.png %}
 
 Unsafe类图如下
 
-![diagram](../../images/Unsafe.png)
-
+{% asset_img Unsafe.png %}
