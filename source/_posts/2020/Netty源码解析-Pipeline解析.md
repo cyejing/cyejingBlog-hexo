@@ -8,7 +8,7 @@ date: 2020-07-10
 
 Pipeline内部关系如图
 
-![img](../../images/1240.png)
+{% asset_img 1240.png %}
 
 每个Channel创建时候会创建对应的Pipeline，不同的Pipeline就会有不同的数据处理逻辑
 
