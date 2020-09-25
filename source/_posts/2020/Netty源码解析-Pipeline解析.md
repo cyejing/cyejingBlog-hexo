@@ -42,6 +42,8 @@ protected DefaultChannelPipeline(Channel channel) {
 }
 ```
 
+<!--more-->
+
 2. 在 add\** 添加处理器的时候创建 Context
 
 ```java
