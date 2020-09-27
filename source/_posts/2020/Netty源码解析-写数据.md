@@ -1,7 +1,8 @@
+---
 title : Netty源码解析-写数据
 tags : [netty]
-date: 2020-07-10
-
+date: 2020-09-26
+---
 
 # 写数据 
 
@@ -15,7 +16,6 @@ date: 2020-07-10
 public ChannelFuture writeAndFlush(Object msg) {
   return writeAndFlush(msg, newPromise());
 }
-
 @Override
 public ChannelFuture writeAndFlush(Object msg, ChannelPromise promise) {
   if (msg == null) {
