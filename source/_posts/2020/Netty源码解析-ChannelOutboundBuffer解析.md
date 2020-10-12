@@ -18,11 +18,14 @@ private Entry unflushedEntry;// 被添加的开始节点，但没有准备好被
 private Entry tailEntry;// 最后一个节点
 ```
 在调用 addFlush 方法的时候会将 unflushedEntry 赋值给 flushedEntry
-![img](1240-20200928104014643.png)
+
+{% asset_img 1240-20200928104014643.png %}
 
 调用 addMessage 方法的时候，创建一个 Entry ，将这个 Entry 追加到 TailEntry 节点后面，调用 addFlush 的时候，将 unflushedEntry 的引用赋给 flushedEntry，然后将 unflushedEntry 置为 null。
 
 当数据被写进 Socket 后，从 flushedEntry（current） 节点开始，循环将每个节点删除。
+
+<!--more-->
 
 ### addMessage	
 
