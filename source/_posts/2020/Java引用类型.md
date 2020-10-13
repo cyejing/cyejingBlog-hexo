@@ -8,8 +8,6 @@ Java中一共有4种引用类型(其实还有一些其他的引用类型比如Fi
 
 本篇文章主要是分析软引用、弱引用、虚引用的实现，这三种引用类型都是继承于Reference这个类，主要逻辑也在Reference中。
 
-更多文章见个人博客：https://github.com/farmerjohngit/myblog
-
 ### 问题
 
 在分析前，先抛几个问题？
