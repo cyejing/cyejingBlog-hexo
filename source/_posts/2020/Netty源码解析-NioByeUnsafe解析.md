@@ -9,6 +9,8 @@ date: 2020-07-10
 
 当Channel有读事件到来，会调用到``Unsafe``读取Socket缓冲区数据，并包装成 Netty 的 ByteBuf 对象，最后传递进 pipeline 中的所有节点完成处理。
 
+<!--more-->
+
 ```java
 // AbstractNioByteChannel.NioByteUnsafe
 @Override

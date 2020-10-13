@@ -12,6 +12,8 @@ Pipeline内部关系如图
 
 每个Channel创建时候会创建对应的Pipeline，不同的Pipeline就会有不同的数据处理逻辑
 
+<!--more-->
+
 1. 创建Pipeline的同时会创建``TailContext``和``HeadContext``组成双向链表
 
 ```java

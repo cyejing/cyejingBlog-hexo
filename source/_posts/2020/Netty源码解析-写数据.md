@@ -10,6 +10,8 @@ date: 2020-09-26
 
 当我们调用此方法时，会从当前节点找上一个 outbound 节点，并调用下个节点的 write 方法。具体看代码：
 
+<!--more-->
+
 ```java
 //AbstractChannelHandlerContext
 @Override
