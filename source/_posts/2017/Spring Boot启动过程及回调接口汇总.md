@@ -1,6 +1,6 @@
 ---
 title : Spring Boot启动过程及回调接口汇总
-tags : [java,spring,springboot]
+tags : [Spring,Java]
 date: 2017-07-10
 ---
 # Spring Boot启动过程及回调接口汇总
@@ -26,9 +26,9 @@ public class SampleApplication {
 1. ``SpringApplication#run(Object source, String... args)``[#L1174][code-SpringApplicationL1174]
 2. [SpringApplication#L1186][code-SpringApplicationL1186] -> ``SpringApplication(sources)``[#L236][code-SpringApplicationL236]
   1. ``SpringApplication#initialize(Object[] sources)``[#L256][code-SpringApplicationL256] [javadoc][boot-SpringApplication]
-    1. [SpringApplication#L257][code-SpringApplicationL257] 添加source（复数），``SpringApplication``使用source来构建Bean。一般来说在``run``的时候都会把[@SpringBootApplication][boot-SpringBootApplication]标记的类(本例中是SampleApplication)放到``sources``参数里，然后由这个类出发找到Bean的定义。
-    2. [SpringApplication#L261][code-SpringApplicationL261] 初始化[ApplicationContextInitializer][core-ApplicationContextInitializer]列表（见附录）
-    3. [SpringApplication#L263][code-SpringApplicationL263] 初始化[ApplicationListener][core-ApplicationListener]列表（见附录）
+        1. [SpringApplication#L257][code-SpringApplicationL257] 添加source（复数），``SpringApplication``使用source来构建Bean。一般来说在``run``的时候都会把[@SpringBootApplication][boot-SpringBootApplication]标记的类(本例中是SampleApplication)放到``sources``参数里，然后由这个类出发找到Bean的定义。
+            2. [SpringApplication#L261][code-SpringApplicationL261] 初始化[ApplicationContextInitializer][core-ApplicationContextInitializer]列表（见附录）
+                3. [SpringApplication#L263][code-SpringApplicationL263] 初始化[ApplicationListener][core-ApplicationListener]列表（见附录）
 3. [SpringApplication#L1186][code-SpringApplicationL1186] -> ``SpringApplication#run(args)``[#L297][code-SpringApplicationL297]，进入运行阶段
 
 ### 推送ApplicationStartedEvent
@@ -46,7 +46,7 @@ public class SampleApplication {
 
 2. 实例化并放入ApplicationContext里面等待调用
 
-   ​
+   
 
 ### 准备Environment
 
@@ -80,8 +80,8 @@ public class SampleApplication {
   4. [SpringApplication#L350][code-SpringApplicationL350]->``listeners.contextPrepared(context)``->[EventPublishingRunListener.contextPrepared][code-EventPublishingRunListener#L73]，但实际上啥都没做。
   5. [SpringApplication#L366][code-SpringApplicationL366]->``load``[#L687][code-SpringApplication#L687]，负责将source(复数)里所定义的Bean加载到[ApplicationContext][core-ApplicationContext]里，在本例中就是SampleApplication，这些source是在**初始化SpringApplication**阶段获得的。
   6. [SpringApplication#L367][code-SpringApplicationL367]->``listeners.contextLoaded(context)``->[EventPublishingRunListener.contextLoaded][code-EventPublishingRunListener#L78]。
-    1. 将[SpringApplication][boot-SpringApplication]自己拥有的[ApplicationListener][core-ApplicationListener]加入到[ApplicationContext][core-ApplicationContext]
-    2. 发送[ApplicationPreparedEvent][boot-ApplicationPreparedEvent]。目前已知关心这个事件的有[ConfigFileApplicationListener][boot-ConfigFileApplicationListener]、[LoggingApplicationListener][boot-LoggingApplicationListener]、[ApplicationPidFileWriter][boot-ApplicationPidFileWriter]
+        1. 将[SpringApplication][boot-SpringApplication]自己拥有的[ApplicationListener][core-ApplicationListener]加入到[ApplicationContext][core-ApplicationContext]
+            2. 发送[ApplicationPreparedEvent][boot-ApplicationPreparedEvent]。目前已知关心这个事件的有[ConfigFileApplicationListener][boot-ConfigFileApplicationListener]、[LoggingApplicationListener][boot-LoggingApplicationListener]、[ApplicationPidFileWriter][boot-ApplicationPidFileWriter]
 
 要注意的是在这个阶段，[ApplicationContext][core-ApplicationContext]里只有SampleApplication，SampleApplication是Bean的加载工作的起点。
 
@@ -294,9 +294,9 @@ public class SampleApplication {
 1. 以SampleApplication为起点开始扫描
 2. 扫描得到所有的[@Configuration][core-Configuration]和[@Component][core-Component]，从中读取[BeanDefinition][core-BeanDefinition]并导入：
   1. 如果[@Configuration][core-Configuration]注解了[@Import][core-Import]
-    1. 如果使用的是[ImportSelector][core-ImportSelector]，则递归导入
-    2. 如果使用的是[ImportBeanDefinitionRegistrar][core-ImportBeanDefinitionRegistrar]，则递归导入
-    3. 如果使用的是[DeferredImportSelector][core-DeferredImportSelector]，则仅收集不导入
+        1. 如果使用的是[ImportSelector][core-ImportSelector]，则递归导入
+            2. 如果使用的是[ImportBeanDefinitionRegistrar][core-ImportBeanDefinitionRegistrar]，则递归导入
+                3. 如果使用的是[DeferredImportSelector][core-DeferredImportSelector]，则仅收集不导入
   2. 如果[@Configuration][core-Configuration]注解了[@ImportResource][core-ImportResource]，则递归导入
 3. 迭代之前收集的[DeferredImportSelector][core-DeferredImportSelector]，递归导入
 

@@ -1,6 +1,6 @@
 ---
 title: ClassPathXmlApplicationContext加载过程
-tags : [java,spring]
+tags : [Spring,Java]
 date : 2017-07-08
 ---
 

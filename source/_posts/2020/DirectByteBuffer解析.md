@@ -1,6 +1,6 @@
 ---
 title : DirectByteBuffer解析
-tags : [netty,java,directByteBuffer]
+tags : [Netty,Java,IO]
 date: 2020-09-25
 ---
 
