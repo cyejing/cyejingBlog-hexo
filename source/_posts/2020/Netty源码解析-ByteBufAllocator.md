@@ -6,7 +6,6 @@ date: 2020-10.30
 
 ## ByteBufAllocator解析
 
-![image-20201030162224718](Netty源码解析-ByteBufAllocator/image-20201030162224718.png)
 
 {% asset_img image-20201030162224718.png %}
 
@@ -14,7 +13,6 @@ date: 2020-10.30
 
 ByteBufAllocator接口有以下方法去创建ByteBuf
 
-![image-20201030162805553](Netty源码解析-ByteBufAllocator/image-20201030162805553.png)
 
 {% asset_img image-20201030162805553.png %}
 

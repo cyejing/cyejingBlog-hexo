@@ -233,7 +233,6 @@ private Entry getEntryAfterMiss(ThreadLocal<?> key, int i, Entry e) {
 
 为便于理解，这里先给出了 Thread、ThreadLocal、ThreadLocalMap、Entry 这几个类在 JVM 的内存示意图：
 
-![image-20201013163425992](ThreadLocal解析/image-20201013163425992.png)
 
 {% asset_img image-20201013163425992.png %}
 

@@ -5,7 +5,7 @@ date: 2020-10-12
 ---
 # Recycler解析
 
-![](Netty源码解析-Recycler-对象池的复用/1240.png)
+
 {% asset_img 1240.png %}
 
 ## 主要方法介绍
