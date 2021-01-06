@@ -1,58 +1,73 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"/>
-    <title>Help</title>
-    <style>
-        .back {
-            position: fixed;
-            left: 0;
-            bottom: 0;
-            width: 100%;
-            border-radius: 0;
-            height: 50px;
-            line-height: 40px;
-            font-size: 20px;
-            font-weight: bold;
-        }
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"/>
+  <title>Help</title>
+  <style>
+    .back {
+      position: fixed;
+      left: 0;
+      bottom: 0;
+      width: 100%;
+      border-radius: 0;
+      height: 50px;
+      line-height: 40px;
+      font-size: 20px;
+      font-weight: bold;
+    }
 
-        .navbar-btn {
-            margin-top: 8px;
-            margin-bottom: 8px;
-            float: right;
-            margin-right: 8px;
-        }
-        ol{
-            font-size: 16px;
-            line-height: 24px;
-        }
-    </style>
+    .navbar-btn {
+      margin-top: 8px;
+      margin-bottom: 8px;
+      float: right;
+      margin-right: 8px;
+    }
+
+    ol {
+      font-size: 16px;
+      line-height: 24px;
+    }
+  </style>
 </head>
 <body>
 <nav class="navbar navbar-default">
-    <div class="navbar-header navbar-brand">
-        Help
-    </div>
-    <button type="button" class="btn btn-default navbar-btn" onclick="Restart()">Restart</button>
+  <div class="navbar-header navbar-brand">
+    Help
+  </div>
+  <button type="button" class="btn btn-default navbar-btn" onclick="Restart()">Restart</button>
 </nav>
 <div class="container">
-    <ol>
-        <li>通过<b>点击</b>移动色块</li>
-        <li>每次移动会增加新色块,如果色块填满<b>游戏结束</b>></li>
-        <li>将4个以上相同颜色的色块连成线(横竖斜)获得<b>分数奖励</b>!</li>
-        <li>每个等级难度都会增加!</li>
-        <li>快来试试你能玩到多少分吧!</li>
-    </ol>
-    <a href="index.html" class="btn btn-info back">BACK</a>
+  <ol>
+    <li>通过<b>点击</b>移动色块</li>
+    <li>每次移动会增加新色块,如果色块填满<b>游戏结束</b>></li>
+    <li>将4个以上相同颜色的色块连成线(横竖斜)获得<b>分数奖励</b>!</li>
+    <li>每个等级难度都会增加!</li>
+    <li>快来试试你能玩到多少分吧!</li>
+  </ol>
+  <a href="index.html" class="btn btn-info back">BACK</a>
 </div>
 <script>
-    function Restart() {
-        localStorage.removeItem("model")
-        localStorage.removeItem("modelKey")
-        location.href = "index.html";
+  function Restart() {
+    localStorage.removeItem("model")
+    localStorage.removeItem("modelKey")
+    location.href = "index.html";
+  }
+
+  document.documentElement.addEventListener('touchstart', function (event) {
+    if (event.touches.length > 1) {
+      event.preventDefault();
     }
+  }, false);
+  var lastTouchEnd = 0;
+  document.documentElement.addEventListener('touchend', function (event) {
+    var now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, false);
 </script>
 </body>
 </html>

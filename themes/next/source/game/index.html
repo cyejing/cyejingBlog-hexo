@@ -6,243 +6,258 @@ and open the template in the editor.
 -->
 <html>
 <head>
-    <title>连线消除游戏_YJ</title>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no"/>
-    <meta http-equiv="X-UA-Compatible" content="IE=edge">
-    <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"/>
-    <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
-    <script type="text/javascript" src="js/jquery.easing.1.3.js"></script>
-    <script type="text/javascript" src="js/bootstrap.min.js"></script>
-    <script type="text/javascript" src="js/respond.min.js"></script>
-    <script type="text/javascript" src="js/av-min.js"></script>
-    <script type="text/javascript" src="js/js.js"></script>
-    <style>
-        body {
-            background-color: #EFEFEF;
+  <title>连线消除游戏_YJ</title>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=0">
+  <meta http-equiv="X-UA-Compatible" content="IE=edge">
+  <link type="text/css" rel="stylesheet" href="css/bootstrap.min.css"/>
+  <script type="text/javascript" src="js/jquery-1.10.2.min.js"></script>
+  <script type="text/javascript" src="js/jquery.easing.1.3.js"></script>
+  <script type="text/javascript" src="js/bootstrap.min.js"></script>
+  <script type="text/javascript" src="js/respond.min.js"></script>
+  <script type="text/javascript" src="js/av-min.js"></script>
+  <script type="text/javascript" src="js/js.js"></script>
+  <style>
+    body {
+      background-color: #EFEFEF;
 
-        }
+    }
 
-        @media (min-width: 992px) {
-            .container {
-                width: 670px;
-            }
-        }
+    @media (min-width: 992px) {
+      .container {
+        width: 670px;
+      }
+    }
 
-        @media (min-width: 1200px) {
-            .container {
-                width: 570px;
-            }
-        }
+    @media (min-width: 1200px) {
+      .container {
+        width: 570px;
+      }
+    }
 
-        .yellow {
-            background-color: #FFBB33
-        }
+    .yellow {
+      background-color: #FFBB33
+    }
 
-        .red {
-            background-color: #FF4444;
-        }
+    .red {
+      background-color: #FF4444;
+    }
 
-        .blue {
-            background-color: #33B5E5;
-        }
+    .blue {
+      background-color: #33B5E5;
+    }
 
-        .green {
-            background-color: #99CC00;
-        }
+    .green {
+      background-color: #99CC00;
+    }
 
-        .purple {
-            background-color: #AA66CC;
-        }
+    .purple {
+      background-color: #AA66CC;
+    }
 
-        .main {
-            position: relative;
-        }
+    .main {
+      position: relative;
+    }
 
-        .myInfo {
-            position: absolute;
+    .myInfo {
+      position: absolute;
 
-        }
+    }
 
-        .myInfo strong {
-            display: block;
-            text-align: right;
-        }
+    .myInfo strong {
+      display: block;
+      text-align: right;
+    }
 
-        .myNext {
-            position: absolute;
-        }
+    .myNext {
+      position: absolute;
+    }
 
-        .myNext .table > tbody > tr > td {
-            width: 25px;
-            height: 25px;
-        }
+    .myNext .table > tbody > tr > td {
+      width: 25px;
+      height: 25px;
+    }
 
-        #next {
-            margin: 0;
-        }
+    #next {
+      margin: 0;
+    }
 
-        .solid {
-            width: 100%;
-            height: 65px;
-            margin-bottom: 20px;
-        }
+    .solid {
+      width: 100%;
+      height: 65px;
+      margin-bottom: 20px;
+    }
 
-        .game-box {
-            background-color: #E0E0E0;
-        }
+    .game-box {
+      background-color: #E0E0E0;
+    }
 
-        .game-box > tbody > tr > td {
-            border-color: #fff;
-            border-width: 1px;
-        }
+    .game-box > tbody > tr > td {
+      border-color: #fff;
+      border-width: 1px;
+    }
 
-        .game-box .disable {
-            position: relative;
-        }
+    .game-box .disable {
+      position: relative;
+    }
 
-        .game-box .disable:after {
-            content: " ";
-            position: absolute;
-            display: block;
-            top: -20.7%;
-            left: 50%;
-            width: 3px;
-            height: 141.4%;
-            transform: rotate(-45deg);
-            -ms-transform: rotate(-45deg);
-            -webkit-transform: rotate(-45deg);
-            background-color: #F8F8F8;
-        }
+    .game-box .disable:after {
+      content: " ";
+      position: absolute;
+      display: block;
+      top: -20.7%;
+      left: 50%;
+      width: 3px;
+      height: 141.4%;
+      transform: rotate(-45deg);
+      -ms-transform: rotate(-45deg);
+      -webkit-transform: rotate(-45deg);
+      background-color: #F8F8F8;
+    }
 
-        .game-box .disable:before {
-            content: " ";
-            position: absolute;
-            display: block;
-            top: -20.7%;
-            left: 50%;
-            width: 3px;
-            height: 141.4%;
-            transform: rotate(45deg);
-            -ms-transform: rotate(45deg);
-            -webkit-transform: rotate(45deg);
-            background-color: #F8F8F8;
-        }
+    .game-box .disable:before {
+      content: " ";
+      position: absolute;
+      display: block;
+      top: -20.7%;
+      left: 50%;
+      width: 3px;
+      height: 141.4%;
+      transform: rotate(45deg);
+      -ms-transform: rotate(45deg);
+      -webkit-transform: rotate(45deg);
+      background-color: #F8F8F8;
+    }
 
-        .help-img {
-            width: 25px;
-            height: 25px;
-            position: absolute;
-            right: -35px;
-            top: 0px;
-        }
-        .ranking-img {
-            width: 25px;
-            height: 25px;
-            position: absolute;
-            right: -35px;
-            top: 37px;
-        }
+    .help-img {
+      width: 25px;
+      height: 25px;
+      position: absolute;
+      right: -35px;
+      top: 0px;
+    }
 
-        @media (min-width: 992px) {
-            .myInfo {
-                font-size: 20px;
-                left: -85px;
-            }
+    .ranking-img {
+      width: 25px;
+      height: 25px;
+      position: absolute;
+      right: -35px;
+      top: 37px;
+    }
 
-            .myInfo strong {
-                font-size: 32px;
-            }
+    @media (min-width: 992px) {
+      .myInfo {
+        font-size: 20px;
+        left: -85px;
+      }
 
-            .myNext {
-                font-size: 20px;
-                right: -105px;
-            }
-        }
+      .myInfo strong {
+        font-size: 32px;
+      }
 
-        @media (max-width: 991px) {
-            .myInfo {
-                font-size: 12px;
-                top: -100px;
-            }
+      .myNext {
+        font-size: 20px;
+        right: -105px;
+      }
+    }
 
-            .myInfo strong {
-                font-size: 21px;
-            }
+    @media (max-width: 991px) {
+      .myInfo {
+        font-size: 12px;
+        top: -100px;
+      }
 
-            .myNext {
-                font-size: 15px;
-                right: 15px;
-                top: -100px;
-            }
+      .myInfo strong {
+        font-size: 21px;
+      }
 
-            .help-img {
-                right: 85px;
-                top: 0px;
-                width: 22px;
-                height: 22px;
-            }
-            .ranking-img {
-                right: 85px;
-                top: 30px;
-                width: 22px;
-                height: 22px;
-            }
-        }
-    </style>
+      .myNext {
+        font-size: 15px;
+        right: 15px;
+        top: -100px;
+      }
+
+      .help-img {
+        right: 85px;
+        top: 0px;
+        width: 22px;
+        height: 22px;
+      }
+
+      .ranking-img {
+        right: 85px;
+        top: 30px;
+        width: 22px;
+        height: 22px;
+      }
+    }
+  </style>
 </head>
 <body>
 <div class="progress progress-striped">
-    <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="300"
-         style="width:0%;">
-        LEVEL <span>1</span>
-    </div>
+  <div class="progress-bar" role="progressbar" aria-valuenow="0" aria-valuemin="0" aria-valuemax="300"
+       style="width:0%;">
+    LEVEL <span>1</span>
+  </div>
 </div>
 <div class="solid visible-xs visible-sm"></div>
 <div class="container main">
 
-    <div class="myInfo">
-        <div id="score">
-            <small>SCORE</small>
-            <strong>0</strong></div>
-        <div id="combo">
-            <small>COMBO</small>
-            <strong>x0</strong></div>
+  <div class="myInfo">
+    <div id="score">
+      <small>SCORE</small>
+      <strong>0</strong></div>
+    <div id="combo">
+      <small>COMBO</small>
+      <strong>x0</strong></div>
+  </div>
+  <div class="myNext">
+    <div>
+      <p>UP NEXT
+        <a href="help.html"><img src="css/help.png" class="help-img"/></a>
+        <a href="ranking.html"><img src="css/ranking.png" class="ranking-img"/></a>
+      </p>
+      <table id="next" class="table  table-bordered">
+        <tr>
+          <td class=""></td>
+          <td class=""></td>
+          <td class=""></td>
+        </tr>
+        <tr>
+          <td></td>
+          <td></td>
+          <td></td>
+        </tr>
+      </table>
     </div>
-    <div class="myNext">
-        <div>
-            <p>UP NEXT
-                <a href="help.html"><img src="css/help.png" class="help-img"/></a>
-                <a href="ranking.html"><img src="css/ranking.png" class="ranking-img"/></a>
-            </p>
-            <table id="next" class="table  table-bordered">
-                <tr>
-                    <td class=""></td>
-                    <td class=""></td>
-                    <td class=""></td>
-                </tr>
-                <tr>
-                    <td></td>
-                    <td></td>
-                    <td></td>
-                </tr>
-            </table>
-        </div>
-    </div>
-    <div style="position: relative">
-        <table class="table table-bordered game-box">
-            <tbody>
+  </div>
+  <div style="position: relative">
+    <table class="table table-bordered game-box">
+      <tbody>
 
-            </tbody>
-        </table>
-        <div class="boxtemp" style="position: absolute; display: none"></div>
-    </div>
+      </tbody>
+    </table>
+    <div class="boxtemp" style="position: absolute; display: none"></div>
+  </div>
 </div>
 <script>
-    $(document).ready(function () {
-        $(".game-box").game();
-    });
+  $(document).ready(function () {
+    $(".game-box").game();
+  });
 
+  document.documentElement.addEventListener('touchstart', function (event) {
+    if (event.touches.length > 1) {
+      event.preventDefault();
+    }
+  }, false);
+  var lastTouchEnd = 0;
+  document.documentElement.addEventListener('touchend', function (event) {
+    var now = Date.now();
+    if (now - lastTouchEnd <= 300) {
+      event.preventDefault();
+    }
+    lastTouchEnd = now;
+  }, false);
 </script>
 </body>
 </html>
