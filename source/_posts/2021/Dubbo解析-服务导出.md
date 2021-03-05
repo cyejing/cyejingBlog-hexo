@@ -18,6 +18,8 @@ date : 2021-2-20
 
 {% asset_img dubbo-export.jpg %}
 
+![/dev-guide/images/dubbo_rpc_refer.jpg](Dubbo解析-服务导出/dubbo_rpc_refer-20210305150423921.jpg)
+
 服务提供者暴露一个服务的详细过程
 
 {% asset_img format.jpeg %}
