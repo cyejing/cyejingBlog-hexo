@@ -99,7 +99,7 @@ ignore:
 ## Plugins: https://hexo.io/plugins/
 ## Themes: https://hexo.io/themes/
 #theme: next
-theme: 3-hexo
+theme: hexo
 
 # Deployment
 ## Docs: https://hexo.io/docs/deployment.html
