@@ -1,4 +1,4 @@
-<mxfile host="app.diagrams.net" modified="2022-03-04T05:16:19.611Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.109 Safari/537.36" etag="-hUuYnaneptJ54Xo_9dP" version="16.6.5" type="github">
+<mxfile host="app.diagrams.net" modified="2022-03-04T05:17:06.153Z" agent="5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/98.0.4758.109 Safari/537.36" etag="a5A81pVNmFswWWXgUNFS" version="16.6.5" type="github">
   <diagram id="47j5oj57MSvHQx2q084O" name="第 1 页">
     <mxGraphModel dx="1042" dy="649" grid="1" gridSize="10" guides="1" tooltips="1" connect="1" arrows="1" fold="1" page="1" pageScale="1" pageWidth="827" pageHeight="1169" math="0" shadow="0">
       <root>
@@ -11,34 +11,34 @@
           <mxGeometry x="80" y="310" width="90" height="30" as="geometry" />
         </mxCell>
         <mxCell id="i7WWzYZFT3efbSj_JE6K-39" value="" style="group" parent="1" vertex="1" connectable="0">
-          <mxGeometry x="70" y="40" width="653.2" height="154.28571428571428" as="geometry" />
+          <mxGeometry x="70" y="40" width="650" height="150" as="geometry" />
         </mxCell>
         <mxCell id="i7WWzYZFT3efbSj_JE6K-7" value="" style="rounded=0;whiteSpace=wrap;html=1;" parent="i7WWzYZFT3efbSj_JE6K-39" vertex="1">
-          <mxGeometry width="653.2" height="154.28571428571428" as="geometry" />
+          <mxGeometry width="650" height="150" as="geometry" />
         </mxCell>
         <mxCell id="i7WWzYZFT3efbSj_JE6K-8" value="特征处理" style="text;html=1;resizable=0;autosize=1;align=center;verticalAlign=middle;points=[];fillColor=none;strokeColor=none;rounded=0;fontSize=18;" parent="i7WWzYZFT3efbSj_JE6K-39" vertex="1">
-          <mxGeometry x="14.200000000000003" y="8.265306122448976" width="90" height="30" as="geometry" />
+          <mxGeometry x="14.130434782608697" y="8.035714285714283" width="90" height="30" as="geometry" />
         </mxCell>
         <mxCell id="i7WWzYZFT3efbSj_JE6K-9" value="Omega客户端埋点数据" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="i7WWzYZFT3efbSj_JE6K-39" vertex="1">
-          <mxGeometry x="18.933333333333337" y="44.08163265306122" width="160.93333333333334" height="38.57142857142857" as="geometry" />
+          <mxGeometry x="18.84057971014493" y="42.857142857142854" width="160.14492753623188" height="37.5" as="geometry" />
         </mxCell>
         <mxCell id="i7WWzYZFT3efbSj_JE6K-10" value="数梦离线数据清洗" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="i7WWzYZFT3efbSj_JE6K-39" vertex="1">
-          <mxGeometry x="189.33333333333337" y="44.08163265306122" width="160.93333333333334" height="38.57142857142857" as="geometry" />
+          <mxGeometry x="188.40579710144928" y="42.857142857142854" width="160.14492753623188" height="37.5" as="geometry" />
         </mxCell>
         <mxCell id="i7WWzYZFT3efbSj_JE6K-11" value="hive离线特征仓库" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="i7WWzYZFT3efbSj_JE6K-39" vertex="1">
-          <mxGeometry x="359.73333333333335" y="44.08163265306122" width="160.93333333333334" height="38.57142857142857" as="geometry" />
+          <mxGeometry x="357.9710144927536" y="42.857142857142854" width="160.14492753623188" height="37.5" as="geometry" />
         </mxCell>
         <mxCell id="i7WWzYZFT3efbSj_JE6K-12" value="Kafka上报数据流&lt;span style=&quot;color: rgba(0 , 0 , 0 , 0) ; font-family: monospace ; font-size: 0px&quot;&gt;%3CmxGraphModel%3E%3Croot%3E%3CmxCell%20id%3D%220%22%2F%3E%3CmxCell%20id%3D%221%22%20parent%3D%220%22%2F%3E%3CmxCell%20id%3D%222%22%20value%3D%22Omega%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%9F%8B%E7%82%B9%E6%95%B0%E6%8D%AE%22%20style%3D%22shape%3Dstep%3Bperimeter%3DstepPerimeter%3BwhiteSpace%3Dwrap%3Bhtml%3D1%3BfixedSize%3D1%3B%22%20vertex%3D%221%22%20parent%3D%221%22%3E%3CmxGeometry%20x%3D%2290%22%20y%3D%22120%22%20width%3D%22170%22%20height%3D%2270%22%20as%3D%22geometry%22%2F%3E%3C%2FmxCell%3E%3C%2Froot%3E%3C%2FmxGraphModel%3E&lt;/span&gt;" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="i7WWzYZFT3efbSj_JE6K-39" vertex="1">
-          <mxGeometry x="18.933333333333337" y="93.67346938775509" width="160.93333333333334" height="38.57142857142857" as="geometry" />
+          <mxGeometry x="18.84057971014493" y="91.07142857142857" width="160.14492753623188" height="37.5" as="geometry" />
         </mxCell>
         <mxCell id="i7WWzYZFT3efbSj_JE6K-13" value="Flink实时数据清洗" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="i7WWzYZFT3efbSj_JE6K-39" vertex="1">
-          <mxGeometry x="189.33333333333337" y="93.67346938775509" width="160.93333333333334" height="38.57142857142857" as="geometry" />
+          <mxGeometry x="188.40579710144928" y="91.07142857142857" width="160.14492753623188" height="37.5" as="geometry" />
         </mxCell>
         <mxCell id="i7WWzYZFT3efbSj_JE6K-14" value="Fusion实时特征仓库" style="shape=step;perimeter=stepPerimeter;whiteSpace=wrap;html=1;fixedSize=1;" parent="i7WWzYZFT3efbSj_JE6K-39" vertex="1">
-          <mxGeometry x="359.73333333333335" y="93.67346938775509" width="160.93333333333334" height="38.57142857142857" as="geometry" />
+          <mxGeometry x="357.9710144927536" y="91.07142857142857" width="160.14492753623188" height="37.5" as="geometry" />
         </mxCell>
         <mxCell id="i7WWzYZFT3efbSj_JE6K-17" value="特征&lt;br&gt;数据库" style="shape=cylinder3;whiteSpace=wrap;html=1;boundedLbl=1;backgroundOutline=1;size=15;fontSize=18;" parent="i7WWzYZFT3efbSj_JE6K-39" vertex="1">
-          <mxGeometry x="558.53" y="40" width="71.47" height="92.24" as="geometry" />
+          <mxGeometry x="555.7937844458052" y="38.88888888888889" width="71.11987140232699" height="89.67777777777778" as="geometry" />
         </mxCell>
         <mxCell id="i7WWzYZFT3efbSj_JE6K-44" value="" style="html=1;shadow=0;dashed=0;align=center;verticalAlign=middle;shape=mxgraph.arrows2.arrow;dy=0.6;dx=40;direction=south;notch=0;fontSize=18;" parent="1" vertex="1">
           <mxGeometry x="362" y="210" width="48" height="80" as="geometry" />
